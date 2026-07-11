@@ -1,0 +1,5 @@
+Hydri — Your Caring Health Companion
+Copyright (c) 2026 Hydri
+
+This software is provided for personal use. Replace this placeholder with
+your actual end-user license agreement before distributing an installer.

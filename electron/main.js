@@ -1,0 +1,132 @@
+import { app } from 'electron'
+import { join } from 'node:path'
+
+import { createMainWindow } from './windows/createMainWindow.js'
+import { createCompanionWindow } from './windows/createCompanionWindow.js'
+import { createTray } from './tray.js'
+import { getDatabase } from './db/database.js'
+import { createSettingsStore } from './store/settingsStore.js'
+import { createWaterService } from './services/waterService.js'
+import { createReminderScheduler } from './reminder/reminderScheduler.js'
+import { createNotifier } from './reminder/notifier.js'
+import { registerIpcHandlers } from './ipc/ipcHandlers.js'
+import { createUpdaterService } from './services/updaterService.js'
+
+app.isQuitting = false
+
+const hasSingleInstanceLock = app.requestSingleInstanceLock()
+if (!hasSingleInstanceLock) {
+  app.quit()
+}
+
+let mainWindow = null
+let companionWindow = null
+let trayApi = null
+
+function getIconPath() {
+  return app.isPackaged
+    ? join(process.resourcesPath, 'icon.png')
+    : join(__dirname, '../build/icon-source.png')
+}
+
+function getPreloadPath() {
+  return join(__dirname, '../preload/preload.js')
+}
+
+function getRendererTarget() {
+  const devUrl = process.env['ELECTRON_RENDERER_URL']
+  if (devUrl) return { rendererUrl: devUrl }
+  return { rendererFile: join(__dirname, '../renderer/index.html') }
+}
+
+app.whenReady().then(() => {
+  const db = getDatabase()
+  const settingsStore = createSettingsStore()
+  const waterService = createWaterService(db, settingsStore)
+  const notifier = createNotifier()
+
+  mainWindow = createMainWindow({
+    iconPath: getIconPath(),
+    preloadPath: getPreloadPath(),
+    startMinimized: settingsStore.get('startMinimized'),
+    ...getRendererTarget()
+  })
+
+  companionWindow = createCompanionWindow({
+    preloadPath: getPreloadPath(),
+    ...getRendererTarget()
+  })
+
+  const scheduler = createReminderScheduler({
+    settingsStore,
+    waterService,
+    notifier,
+    getCompanionWindow: () => companionWindow,
+    getMainWindow: () => mainWindow
+  })
+  scheduler.start()
+
+  const updaterService = createUpdaterService({ settingsStore, getMainWindow: () => mainWindow })
+
+  registerIpcHandlers({
+    waterService,
+    settingsStore,
+    scheduler,
+    updaterService,
+    getCompanionWindow: () => companionWindow
+  })
+
+  trayApi = createTray({
+    iconPath: getIconPath(),
+    getPaused: () => scheduler.paused,
+    onOpenDashboard: () => {
+      mainWindow.show()
+      mainWindow.focus()
+    },
+    onDrinkNow: () => scheduler.triggerNow(),
+    onPause: () => {
+      scheduler.pause()
+      settingsStore.set('remindersPaused', true)
+      trayApi.refreshMenu()
+    },
+    onResume: () => {
+      scheduler.resume()
+      settingsStore.set('remindersPaused', false)
+      trayApi.refreshMenu()
+    },
+    onOpenSettings: () => {
+      mainWindow.show()
+      mainWindow.focus()
+      mainWindow.webContents.send('navigate', '/settings')
+    },
+    onCheckUpdates: () => updaterService.checkForUpdates(),
+    onExit: () => {
+      app.isQuitting = true
+      app.quit()
+    }
+  })
+
+  if (settingsStore.get('autoUpdateEnabled')) {
+    updaterService.checkForUpdates()
+  }
+
+  app.on('activate', () => {
+    mainWindow.show()
+  })
+})
+
+app.on('second-instance', () => {
+  if (!mainWindow) return
+  if (mainWindow.isMinimized()) mainWindow.restore()
+  mainWindow.show()
+  mainWindow.focus()
+})
+
+app.on('window-all-closed', () => {
+  // Hydri lives in the tray; closing windows should not quit the app on Windows/Linux.
+  if (process.platform === 'darwin') return
+})
+
+app.on('before-quit', () => {
+  app.isQuitting = true
+})
