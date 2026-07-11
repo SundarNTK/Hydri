@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useWaterStats } from '../hooks/useWaterStats.js'
+import { useSettings } from '../hooks/useSettings.js'
 import { api } from '../ipc/api.js'
 import ThemeToggle from '../components/common/ThemeToggle.jsx'
 import ProgressRing from '../components/dashboard/ProgressRing.jsx'
@@ -10,6 +11,7 @@ import AchievementGrid from '../components/dashboard/AchievementGrid.jsx'
 
 export default function DashboardPage() {
   const { stats, refresh } = useWaterStats()
+  const { settings } = useSettings()
 
   if (!stats) {
     return (
@@ -26,7 +28,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-emerald-50 p-6 dark:from-slate-900 dark:to-slate-950">
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-hydri-ink dark:text-white">Hydri Dashboard</h1>
+          <h1 className="text-2xl font-bold text-hydri-ink dark:text-white">
+            {settings?.userName ? `Hi ${settings.userName} 👋` : 'Hydri Dashboard'}
+          </h1>
           <p className="text-sm text-hydri-ink/60 dark:text-white/50">Your Caring Health Companion</p>
         </div>
         <div className="flex items-center gap-3">

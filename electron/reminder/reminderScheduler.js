@@ -1,11 +1,24 @@
+// Each entry is a function of the user's name (may be '') rather than a
+// plain string, so every line can optionally address them by name without
+// producing awkward doubled punctuation when no name has been set yet.
 const DIALOGUE = {
-  greeting: [
-    "Hi! 😊 It's time to drink some water. Can you drink one glass now?",
-    'Hey there! Time for a water break — one glass now?',
-    'Psst! Your body could use some water right now.'
+  greeting: (name) => [
+    `Hi${name ? ' ' + name : ''}! 😊 It's time to drink some water. Can you drink one glass now?`,
+    `Hey${name ? ' ' + name : ' there'}! Time for a water break — one glass now?`,
+    `Psst${name ? ', ' + name : ''}! Your body could use some water right now.`
   ],
-  happy: ['Yay! Thank you!', "I'm proud of you.", 'Your body will thank you.', 'Keep staying hydrated!'],
-  annoyed: ['Again? 😒', 'Five minutes only!', "Don't make me remind you twice.", "I'm counting on you!"]
+  happy: (name) => [
+    'Yay! Thank you!',
+    `I'm proud of you${name ? ', ' + name : ''}.`,
+    'Your body will thank you.',
+    `Keep staying hydrated${name ? ', ' + name : ''}!`
+  ],
+  annoyed: (name) => [
+    `Again${name ? ', ' + name : ''}? 😒`,
+    'Five minutes only!',
+    `Don't make me remind you twice${name ? ', ' + name : ''}.`,
+    "I'm counting on you!"
+  ]
 }
 
 function pickRandom(list) {
@@ -38,7 +51,7 @@ export function createReminderScheduler({ settingsStore, waterService, notifier,
   function fire() {
     if (paused) return
     currentReminderId = waterService.createPendingReminder()
-    const payload = { reminderId: currentReminderId, dialogue: pickRandom(DIALOGUE.greeting) }
+    const payload = { reminderId: currentReminderId, dialogue: pickRandom(DIALOGUE.greeting(settingsStore.get('userName'))) }
 
     const companionWindow = getCompanionWindow()
     if (companionWindow) {
@@ -62,7 +75,7 @@ export function createReminderScheduler({ settingsStore, waterService, notifier,
     if (mainWindow) mainWindow.webContents.send('reminder:stats-updated', result.stats)
 
     scheduleNext()
-    return { ...result, dialogue: pickRandom(DIALOGUE.happy) }
+    return { ...result, dialogue: pickRandom(DIALOGUE.happy(settingsStore.get('userName'))) }
   }
 
   function respondSnooze(minutes = 5) {
@@ -71,7 +84,7 @@ export function createReminderScheduler({ settingsStore, waterService, notifier,
     currentReminderId = null
 
     scheduleNext(minutes * 60 * 1000)
-    return { dialogue: pickRandom(DIALOGUE.annoyed) }
+    return { dialogue: pickRandom(DIALOGUE.annoyed(settingsStore.get('userName'))) }
   }
 
   function pause() {

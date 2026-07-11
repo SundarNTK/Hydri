@@ -1,17 +1,33 @@
+import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+
 const INTERVAL_OPTIONS = [15, 30, 45, 60, 90, 120]
 
 const selectClass =
-  'w-full rounded-lg border border-black/10 bg-white/80 px-3 py-2 text-sm text-hydri-ink shadow-sm focus:border-hydri-blue focus:outline-none dark:border-white/10 dark:bg-slate-900/60 dark:text-white'
+  'w-full rounded-lg border border-black/10 bg-white/80 px-3 py-2 text-sm text-hydri-ink shadow-sm transition focus:border-hydri-blue focus:outline-none focus:ring-2 focus:ring-hydri-blue/20 dark:border-white/10 dark:bg-slate-900/60 dark:text-white'
 const inputClass = selectClass
 
-function Section({ title, children }) {
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } }
+}
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } }
+}
+
+function Section({ title, icon, children }) {
   return (
-    <div className="border-b border-black/5 pb-5 last:border-b-0 last:pb-0 dark:border-white/5">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-hydri-ink/60 dark:text-white/50">
-        {title}
+    <motion.div
+      variants={sectionVariants}
+      className="border-b border-black/5 pb-5 last:border-b-0 last:pb-0 dark:border-white/5"
+    >
+      <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-hydri-ink/60 dark:text-white/50">
+        <span className="text-base leading-none">{icon}</span> {title}
       </h2>
       <div className="space-y-4">{children}</div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -28,20 +44,70 @@ function ToggleField({ label, checked, onChange }) {
   return (
     <label className="flex items-center justify-between">
       <span className="text-sm font-medium text-hydri-ink/80 dark:text-white/70">{label}</span>
-      <button
+      <motion.button
         type="button"
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`h-6 w-11 rounded-full transition ${checked ? 'bg-hydri-blue' : 'bg-black/15 dark:bg-white/15'}`}
+        whileTap={{ scale: 0.92 }}
+        animate={{ backgroundColor: checked ? '#3aa1d6' : 'rgba(120,120,130,0.25)' }}
+        transition={{ duration: 0.2 }}
+        className="flex h-6 w-11 items-center rounded-full px-0.5"
       >
-        <span
-          className={`block h-5 w-5 translate-y-0.5 rounded-full bg-white shadow transition ${
-            checked ? 'translate-x-5' : 'translate-x-0.5'
-          }`}
+        <motion.span
+          layout
+          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          animate={{ x: checked ? 20 : 0 }}
+          className="block h-5 w-5 rounded-full bg-white shadow"
         />
-      </button>
+      </motion.button>
     </label>
+  )
+}
+
+function NameField({ value, onUpdate }) {
+  const [name, setName] = useState(value ?? '')
+  const [saved, setSaved] = useState(false)
+
+  const commit = () => {
+    const trimmed = name.trim()
+    if (trimmed === (value ?? '')) return
+    onUpdate({ userName: trimmed })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 1500)
+  }
+
+  return (
+    <Field label="Your name">
+      <div className="flex items-center gap-2">
+        <input
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          onBlur={commit}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') event.currentTarget.blur()
+          }}
+          maxLength={40}
+          placeholder="What should Hydri call you?"
+          className={inputClass}
+        />
+        <AnimatePresence>
+          {saved && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              className="text-lg text-hydri-leaf"
+            >
+              ✓
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+      <span className="mt-1 block text-xs text-hydri-ink/50 dark:text-white/40">
+        Used to personalize reminder messages, e.g. "Hi {name || 'there'}! Time for water."
+      </span>
+    </Field>
   )
 }
 
@@ -49,8 +115,12 @@ export default function SettingsForm({ settings, onUpdate }) {
   const isCustomInterval = settings.reminderInterval === 'custom' || !INTERVAL_OPTIONS.includes(settings.reminderInterval)
 
   return (
-    <div className="space-y-5">
-      <Section title="Reminders">
+    <motion.div className="space-y-5" variants={containerVariants} initial="hidden" animate="visible">
+      <Section title="Profile" icon="👤">
+        <NameField value={settings.userName} onUpdate={onUpdate} />
+      </Section>
+
+      <Section title="Reminders" icon="💧">
         <Field label="Reminder interval">
           <select
             value={isCustomInterval ? 'custom' : settings.reminderInterval}
@@ -116,7 +186,7 @@ export default function SettingsForm({ settings, onUpdate }) {
         </Field>
       </Section>
 
-      <Section title="Sound">
+      <Section title="Sound" icon="🔊">
         <ToggleField
           label="Enable sound"
           checked={settings.soundEnabled}
@@ -130,12 +200,12 @@ export default function SettingsForm({ settings, onUpdate }) {
             step={0.05}
             value={settings.voiceVolume}
             onChange={(event) => onUpdate({ voiceVolume: Number(event.target.value) })}
-            className="w-full"
+            className="w-full accent-hydri-blue"
           />
         </Field>
       </Section>
 
-      <Section title="Startup & Updates">
+      <Section title="Startup & Updates" icon="🚀">
         <ToggleField
           label="Run at Windows startup"
           checked={settings.runAtStartup}
@@ -152,6 +222,6 @@ export default function SettingsForm({ settings, onUpdate }) {
           onChange={(checked) => onUpdate({ autoUpdateEnabled: checked })}
         />
       </Section>
-    </div>
+    </motion.div>
   )
 }

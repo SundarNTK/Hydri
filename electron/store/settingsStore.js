@@ -1,6 +1,8 @@
 import Store from 'electron-store'
 
 const schema = {
+  userName: { type: 'string', default: '' },
+  onboardingSeen: { type: 'boolean', default: false },
   reminderInterval: { type: 'number', default: 60 },
   customIntervalMinutes: { type: 'number', default: 60 },
   dailyGoalMl: { type: 'number', default: 2000 },
