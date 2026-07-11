@@ -50,69 +50,90 @@ export default function Mascot({ pose = 'idle', size = 'medium', facingLeft = fa
   }, [pose])
 
   const sizePx = SIZE_MAP[size] ?? SIZE_MAP.medium
+  const aspect = 170 / 120
 
   return (
     <div
       ref={rootRef}
-      style={{ width: sizePx, height: sizePx * 1.25, transform: facingLeft ? 'scaleX(-1)' : 'none' }}
+      style={{ width: sizePx, height: sizePx * aspect, transform: facingLeft ? 'scaleX(-1)' : 'none' }}
       className="relative"
     >
-      <svg viewBox="0 0 120 150" width="100%" height="100%">
+      <svg viewBox="0 0 120 170" width="100%" height="100%">
         <defs>
-          <linearGradient id="hydriDropGradient" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="hydriDressGradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#7dd3fc" />
             <stop offset="100%" stopColor="#3aa1d6" />
           </linearGradient>
         </defs>
 
         <g ref={leftLegRef}>
-          <line x1="52" y1="112" x2="46" y2="142" stroke="#1c6f9c" strokeWidth="7" strokeLinecap="round" />
+          <line x1="52" y1="128" x2="46" y2="158" stroke="#1c6f9c" strokeWidth="8" strokeLinecap="round" />
+          <ellipse cx="46" cy="161" rx="8" ry="5" fill="#ffffff" stroke="#1c6f9c" strokeWidth="1.5" />
         </g>
         <g ref={rightLegRef}>
-          <line x1="68" y1="112" x2="74" y2="142" stroke="#1c6f9c" strokeWidth="7" strokeLinecap="round" />
+          <line x1="68" y1="128" x2="74" y2="158" stroke="#1c6f9c" strokeWidth="8" strokeLinecap="round" />
+          <ellipse cx="74" cy="161" rx="8" ry="5" fill="#ffffff" stroke="#1c6f9c" strokeWidth="1.5" />
         </g>
 
         <g ref={bodyRef}>
+          {/* twin-tail hair, drawn behind the head */}
+          <ellipse cx="26" cy="58" rx="13" ry="18" fill="#274b5e" />
+          <ellipse cx="94" cy="58" rx="13" ry="18" fill="#274b5e" />
+
+          {/* dress */}
           <path
-            d="M60 8 C 90 45, 108 70, 108 92 A 48 48 0 1 1 12 92 C 12 70, 30 45, 60 8 Z"
-            fill="url(#hydriDropGradient)"
+            d="M 40 76 L 80 76 L 92 130 Q 60 141 28 130 Z"
+            fill="url(#hydriDressGradient)"
             stroke="#1c6f9c"
             strokeWidth="2"
           />
-          <path
-            d="M78 78 C 92 74, 104 84, 100 98 C 88 100, 76 92, 78 78 Z"
-            fill="#4caf50"
-            stroke="#2e7d32"
-            strokeWidth="2"
-          />
-          <circle cx="34" cy="90" r="6" fill="#ffffff" opacity="0.55" />
+          <circle cx="40" cy="80" r="7" fill="#3aa1d6" stroke="#1c6f9c" strokeWidth="1.5" />
+          <circle cx="80" cy="80" r="7" fill="#3aa1d6" stroke="#1c6f9c" strokeWidth="1.5" />
+
+          {/* neck */}
+          <rect x="53" y="62" width="14" height="12" fill="#ffdfc0" />
+
+          {/* hair cap peeking around the face, then the face itself on top */}
+          <circle cx="60" cy="36" r="29" fill="#274b5e" />
+          <circle cx="60" cy="44" r="24" fill="#ffdfc0" stroke="#1c6f9c" strokeWidth="1" />
+
+          <circle cx="45" cy="50" r="4" fill="#ff9eb0" opacity="0.55" />
+          <circle cx="75" cy="50" r="4" fill="#ff9eb0" opacity="0.55" />
 
           {pose === 'annoyed' ? (
             <>
-              <path d="M40 78 L52 82" stroke="#0d2b33" strokeWidth="4" strokeLinecap="round" />
-              <path d="M80 78 L68 82" stroke="#0d2b33" strokeWidth="4" strokeLinecap="round" />
-              <path d="M46 100 Q60 92 74 100" stroke="#0d2b33" strokeWidth="4" fill="none" strokeLinecap="round" />
+              <path d="M 40 42 L 50 46" stroke="#2b2b2b" strokeWidth="3" strokeLinecap="round" />
+              <path d="M 80 42 L 70 46" stroke="#2b2b2b" strokeWidth="3" strokeLinecap="round" />
+              <path d="M 50 60 Q 60 54 70 60" stroke="#2b2b2b" strokeWidth="3" fill="none" strokeLinecap="round" />
             </>
           ) : (
             <>
-              <circle cx="46" cy="82" r="4.5" fill="#0d2b33" />
-              <circle cx="74" cy="82" r="4.5" fill="#0d2b33" />
+              <circle cx="52" cy="44" r="3.2" fill="#2b2b2b" />
+              <circle cx="68" cy="44" r="3.2" fill="#2b2b2b" />
               <path
-                d={pose === 'happy' ? 'M44 98 Q60 114 76 98' : 'M46 98 Q60 108 74 98'}
-                stroke="#0d2b33"
-                strokeWidth="4"
+                d={pose === 'happy' ? 'M 48 58 Q 60 70 72 58' : 'M 50 58 Q 60 65 70 58'}
+                stroke="#2b2b2b"
+                strokeWidth="3"
                 fill="none"
                 strokeLinecap="round"
               />
             </>
           )}
+
+          {/* leaf hair clip — ties back to the Hydri logo */}
+          <path
+            d="M 84 34 C 94 30, 102 38, 98 48 C 88 50, 80 44, 84 34 Z"
+            fill="#4caf50"
+            stroke="#2e7d32"
+            strokeWidth="1.5"
+          />
         </g>
 
         <g ref={leftArmRef}>
-          <line x1="30" y1="88" x2="14" y2="108" stroke="#1c6f9c" strokeWidth="7" strokeLinecap="round" />
+          <line x1="40" y1="82" x2="24" y2="108" stroke="#ffdfc0" strokeWidth="7" strokeLinecap="round" />
         </g>
         <g ref={rightArmRef}>
-          <line x1="90" y1="88" x2="106" y2="108" stroke="#1c6f9c" strokeWidth="7" strokeLinecap="round" />
+          <line x1="80" y1="82" x2="96" y2="108" stroke="#ffdfc0" strokeWidth="7" strokeLinecap="round" />
         </g>
       </svg>
 

@@ -78,8 +78,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "TODO_GITHUB_OWNER",
-      "repo": "TODO_GITHUB_REPO"
+      "owner": "SundarNTK",
+      "repo": "Hydri"
     }
   }
 }
