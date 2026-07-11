@@ -18,7 +18,7 @@ const schema = {
   characterId: { type: 'string', enum: ['girl', 'boy', 'waterdrop', 'leafbuddy'], default: 'girl' },
   remindersPaused: { type: 'boolean', default: false },
   batteryReminderEnabled: { type: 'boolean', default: true },
-  batteryReminderThreshold: { type: 'number', default: 95 }
+  batteryReminderThreshold: { type: 'number', default: 100 }
 }
 
 export function createSettingsStore() {
