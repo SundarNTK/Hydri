@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSettings } from '../hooks/useSettings.js'
 import SettingsForm from '../components/settings/SettingsForm.jsx'
 import ThemeToggle from '../components/common/ThemeToggle.jsx'
+import Logo from '../components/common/Logo.jsx'
 import GlassCard from '../components/common/GlassCard.jsx'
 
 const navLinkClass =
@@ -31,9 +32,12 @@ export default function SettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div>
-          <h1 className="text-2xl font-bold text-hydri-ink dark:text-white">Settings</h1>
-          <p className="text-sm text-hydri-ink/60 dark:text-white/50">Tune Hydri to fit your day</p>
+        <div className="flex items-center gap-3">
+          <Logo size={40} />
+          <div>
+            <h1 className="text-2xl font-bold text-hydri-ink dark:text-white">Settings</h1>
+            <p className="text-sm text-hydri-ink/60 dark:text-white/50">Tune Hydri to fit your day</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <Link to="/character-lab" className={navLinkClass}>

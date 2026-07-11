@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import fullLogo from '../../assets/hydri-full-logo.png'
 
 export default function OnboardingModal({ onSubmit, onSkip }) {
   const [name, setName] = useState('')
@@ -35,14 +36,14 @@ export default function OnboardingModal({ onSubmit, onSkip }) {
           transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
         />
 
-        <motion.div
-          className="relative mb-2 text-5xl"
-          animate={{ rotate: [0, -8, 8, -8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 1.4 }}
-        >
-          💧
-        </motion.div>
-        <h1 className="relative text-xl font-bold text-hydri-ink dark:text-white">Welcome to Hydri!</h1>
+        <motion.img
+          src={fullLogo}
+          alt="Hydri — Your Caring Health Companion"
+          className="relative mx-auto mb-3 w-56 max-w-full"
+          initial={{ scale: 0.85, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.1 }}
+        />
         <p className="relative mt-1 mb-5 text-sm text-hydri-ink/60 dark:text-white/60">
           I'm your caring hydration companion. What should I call you?
         </p>

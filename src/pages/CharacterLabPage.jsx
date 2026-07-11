@@ -5,6 +5,7 @@ import { CHARACTERS } from '../components/companion/characters/index.js'
 import { useSettings } from '../hooks/useSettings.js'
 import { api } from '../ipc/api.js'
 import ThemeToggle from '../components/common/ThemeToggle.jsx'
+import Logo from '../components/common/Logo.jsx'
 import GlassCard from '../components/common/GlassCard.jsx'
 
 const POSES = [
@@ -35,9 +36,12 @@ export default function CharacterLabPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-emerald-50 p-6 dark:from-slate-900 dark:to-slate-950">
       <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-hydri-ink dark:text-white">Character Lab</h1>
-          <p className="text-sm text-hydri-ink/60 dark:text-white/50">Preview animations and choose your companion</p>
+        <div className="flex items-center gap-3">
+          <Logo size={40} />
+          <div>
+            <h1 className="text-2xl font-bold text-hydri-ink dark:text-white">Character Lab</h1>
+            <p className="text-sm text-hydri-ink/60 dark:text-white/50">Preview animations and choose your companion</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <Link
