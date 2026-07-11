@@ -52,7 +52,7 @@
     ],
     "extraResources": [
       {
-        "from": "build/icon-source.png",
+        "from": "build/icon-square.png",
         "to": "icon.png"
       }
     ],
