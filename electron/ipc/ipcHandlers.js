@@ -1,4 +1,4 @@
-import { ipcMain, app } from 'electron'
+import { ipcMain, app, BrowserWindow } from 'electron'
 
 export function registerIpcHandlers({ waterService, settingsStore, scheduler, updaterService, getCompanionWindow }) {
   ipcMain.handle('water:getStats', () => waterService.getStats())
@@ -13,9 +13,16 @@ export function registerIpcHandlers({ waterService, settingsStore, scheduler, up
     if ('runAtStartup' in partial) {
       app.setLoginItemSettings({ openAtLogin: !!partial.runAtStartup })
     }
+    // Other open windows (e.g. a companion overlay left mounted in the
+    // background) fetch settings once on mount — push updates so they don't
+    // keep acting on a stale character/theme/goal after this window changes it.
+    for (const win of BrowserWindow.getAllWindows()) {
+      win.webContents.send('settings:updated', settingsStore.store)
+    }
     return settingsStore.store
   })
 
+  ipcMain.handle('reminders:triggerNow', () => scheduler.triggerNow())
   ipcMain.handle('reminders:respondDrink', () => scheduler.respondDrink())
   ipcMain.handle('reminders:respondSnooze', (_event, minutes) => scheduler.respondSnooze(minutes))
 

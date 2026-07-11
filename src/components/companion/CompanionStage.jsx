@@ -25,7 +25,16 @@ const POSE_BY_PHASE = {
   exiting: 'walking'
 }
 
-export default function CompanionStage({ phase, dialogue, characterSize, onArrived, onDeparted, onDrinkNow, onSnooze }) {
+export default function CompanionStage({
+  phase,
+  dialogue,
+  characterId,
+  characterSize,
+  onArrived,
+  onDeparted,
+  onDrinkNow,
+  onSnooze
+}) {
   const targetX = TARGET_X_BY_PHASE[phase] ?? START_X
   const pose = POSE_BY_PHASE[phase] ?? 'idle'
   const showBubble = phase === 'greeting' || phase === 'happy' || phase === 'annoyed'
@@ -42,7 +51,7 @@ export default function CompanionStage({ phase, dialogue, characterSize, onArriv
           if (phase === 'exiting') onDeparted?.()
         }}
       >
-        <Mascot pose={pose} size={characterSize} facingLeft={phase === 'exiting'} />
+        <Mascot characterId={characterId} pose={pose} size={characterSize} facingLeft={phase === 'exiting'} />
       </motion.div>
 
       <AnimatePresence>

@@ -13,9 +13,11 @@ contextBridge.exposeInMainWorld('hydri', {
   },
   settings: {
     get: () => ipcRenderer.invoke('settings:get'),
-    update: (partial) => ipcRenderer.invoke('settings:update', partial)
+    update: (partial) => ipcRenderer.invoke('settings:update', partial),
+    onUpdated: (callback) => subscribe('settings:updated', callback)
   },
   reminders: {
+    triggerNow: () => ipcRenderer.invoke('reminders:triggerNow'),
     respondDrink: () => ipcRenderer.invoke('reminders:respondDrink'),
     respondSnooze: (minutes) => ipcRenderer.invoke('reminders:respondSnooze', minutes),
     pause: () => ipcRenderer.invoke('reminders:pause'),

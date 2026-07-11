@@ -9,8 +9,12 @@ export function useSettings() {
     api.settings.get().then((data) => {
       if (!cancelled) setSettings(data)
     })
+    const unsubscribe = api.settings.onUpdated((data) => {
+      if (!cancelled) setSettings(data)
+    })
     return () => {
       cancelled = true
+      unsubscribe()
     }
   }, [])
 

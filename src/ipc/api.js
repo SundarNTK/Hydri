@@ -12,9 +12,11 @@ export const api = {
   },
   settings: {
     get: () => bridge().settings.get(),
-    update: (partial) => bridge().settings.update(partial)
+    update: (partial) => bridge().settings.update(partial),
+    onUpdated: (callback) => bridge().settings.onUpdated(callback)
   },
   reminders: {
+    triggerNow: () => bridge().reminders.triggerNow(),
     respondDrink: () => bridge().reminders.respondDrink(),
     respondSnooze: (minutes) => bridge().reminders.respondSnooze(minutes),
     pause: () => bridge().reminders.pause(),

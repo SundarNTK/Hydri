@@ -12,6 +12,8 @@ const schema = {
   autoUpdateEnabled: { type: 'boolean', default: true },
   reminderPosition: { type: 'string', enum: ['bottom-left', 'bottom-right'], default: 'bottom-left' },
   characterSize: { type: 'string', enum: ['small', 'medium', 'large'], default: 'medium' },
+  // Keep in sync with the `id`s in src/components/companion/characters/index.js
+  characterId: { type: 'string', enum: ['girl', 'waterdrop'], default: 'girl' },
   remindersPaused: { type: 'boolean', default: false }
 }
 

@@ -30,6 +30,7 @@ export default function CompanionOverlayPage() {
       <CompanionStage
         phase={phase}
         dialogue={dialogue}
+        characterId={settings?.characterId ?? 'girl'}
         characterSize={settings?.characterSize ?? 'medium'}
         onArrived={handleArrived}
         onDeparted={handleDeparted}
