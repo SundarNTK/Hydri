@@ -25,6 +25,10 @@ contextBridge.exposeInMainWorld('hydri', {
     onTrigger: (callback) => subscribe('reminder:trigger', callback),
     onStatsUpdated: (callback) => subscribe('reminder:stats-updated', callback)
   },
+  battery: {
+    acknowledge: () => ipcRenderer.invoke('battery:acknowledge'),
+    snooze: (minutes) => ipcRenderer.invoke('battery:snooze', minutes)
+  },
   updater: {
     checkNow: () => ipcRenderer.invoke('updater:checkNow'),
     quitAndInstall: () => ipcRenderer.invoke('updater:quitAndInstall'),

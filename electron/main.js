@@ -9,6 +9,8 @@ import { createSettingsStore } from './store/settingsStore.js'
 import { createWaterService } from './services/waterService.js'
 import { createReminderScheduler } from './reminder/reminderScheduler.js'
 import { createNotifier } from './reminder/notifier.js'
+import { createBatteryMonitor } from './services/batteryMonitor.js'
+import { createBatteryReminderPresenter } from './reminder/batteryReminder.js'
 import { registerIpcHandlers } from './ipc/ipcHandlers.js'
 import { createUpdaterService } from './services/updaterService.js'
 
@@ -66,12 +68,28 @@ app.whenReady().then(() => {
   })
   scheduler.start()
 
+  // `batteryReminder` is referenced inside the monitor's callback before it's
+  // assigned below -- safe because the callback only runs later, on a poll
+  // tick, by which point the `let` binding has been filled in.
+  let batteryReminder
+  const batteryMonitor = createBatteryMonitor({
+    settingsStore,
+    onFullyCharged: () => batteryReminder.fire()
+  })
+  batteryReminder = createBatteryReminderPresenter({
+    getCompanionWindow: () => companionWindow,
+    batteryMonitor,
+    notifier
+  })
+  batteryMonitor.start()
+
   const updaterService = createUpdaterService({ settingsStore, getMainWindow: () => mainWindow })
 
   registerIpcHandlers({
     waterService,
     settingsStore,
     scheduler,
+    batteryReminder,
     updaterService,
     getCompanionWindow: () => companionWindow
   })

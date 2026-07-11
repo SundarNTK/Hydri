@@ -24,6 +24,10 @@ export const api = {
     onTrigger: (callback) => bridge().reminders.onTrigger(callback),
     onStatsUpdated: (callback) => bridge().reminders.onStatsUpdated(callback)
   },
+  battery: {
+    acknowledge: () => bridge().battery.acknowledge(),
+    snooze: (minutes) => bridge().battery.snooze(minutes)
+  },
   updater: {
     checkNow: () => bridge().updater.checkNow(),
     quitAndInstall: () => bridge().updater.quitAndInstall(),

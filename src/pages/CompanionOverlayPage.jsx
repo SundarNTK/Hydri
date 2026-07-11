@@ -7,7 +7,7 @@ import { api } from '../ipc/api.js'
 const REACTION_DISPLAY_MS = 2600
 
 export default function CompanionOverlayPage() {
-  const { phase, setPhase, dialogue, drinkNow, snooze, finishExit } = useReminderState()
+  const { phase, setPhase, dialogue, kind, primaryAction, secondaryAction, finishExit } = useReminderState()
   const { settings } = useSettings()
 
   const handleArrived = useCallback(() => {
@@ -30,12 +30,13 @@ export default function CompanionOverlayPage() {
       <CompanionStage
         phase={phase}
         dialogue={dialogue}
+        kind={kind}
         characterId={settings?.characterId ?? 'girl'}
         characterSize={settings?.characterSize ?? 'medium'}
         onArrived={handleArrived}
         onDeparted={handleDeparted}
-        onDrinkNow={drinkNow}
-        onSnooze={() => snooze(5)}
+        onPrimary={primaryAction}
+        onSecondary={() => secondaryAction()}
       />
     </div>
   )

@@ -16,7 +16,9 @@ const schema = {
   characterSize: { type: 'string', enum: ['small', 'medium', 'large'], default: 'medium' },
   // Keep in sync with the `id`s in src/components/companion/characters/index.js
   characterId: { type: 'string', enum: ['girl', 'boy', 'waterdrop', 'leafbuddy'], default: 'girl' },
-  remindersPaused: { type: 'boolean', default: false }
+  remindersPaused: { type: 'boolean', default: false },
+  batteryReminderEnabled: { type: 'boolean', default: true },
+  batteryReminderThreshold: { type: 'number', default: 95 }
 }
 
 export function createSettingsStore() {

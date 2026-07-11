@@ -1,6 +1,13 @@
 import { ipcMain, app, BrowserWindow } from 'electron'
 
-export function registerIpcHandlers({ waterService, settingsStore, scheduler, updaterService, getCompanionWindow }) {
+export function registerIpcHandlers({
+  waterService,
+  settingsStore,
+  scheduler,
+  batteryReminder,
+  updaterService,
+  getCompanionWindow
+}) {
   ipcMain.handle('water:getStats', () => waterService.getStats())
   ipcMain.handle('water:logGlass', () => waterService.drinkNow())
 
@@ -35,6 +42,9 @@ export function registerIpcHandlers({ waterService, settingsStore, scheduler, up
     scheduler.resume()
     settingsStore.set('remindersPaused', false)
   })
+
+  ipcMain.handle('battery:acknowledge', () => batteryReminder.acknowledge())
+  ipcMain.handle('battery:snooze', (_event, minutes) => batteryReminder.snooze(minutes))
 
   ipcMain.handle('updater:checkNow', () => updaterService.checkForUpdates())
   ipcMain.handle('updater:quitAndInstall', () => updaterService.quitAndInstall())

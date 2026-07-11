@@ -51,7 +51,11 @@ export function createReminderScheduler({ settingsStore, waterService, notifier,
   function fire() {
     if (paused) return
     currentReminderId = waterService.createPendingReminder()
-    const payload = { reminderId: currentReminderId, dialogue: pickRandom(DIALOGUE.greeting(settingsStore.get('userName'))) }
+    const payload = {
+      kind: 'water',
+      reminderId: currentReminderId,
+      dialogue: pickRandom(DIALOGUE.greeting(settingsStore.get('userName')))
+    }
 
     const companionWindow = getCompanionWindow()
     if (companionWindow) {

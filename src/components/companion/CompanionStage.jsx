@@ -30,12 +30,13 @@ const POSE_BY_PHASE = {
 export default function CompanionStage({
   phase,
   dialogue,
+  kind,
   characterId,
   characterSize,
   onArrived,
   onDeparted,
-  onDrinkNow,
-  onSnooze
+  onPrimary,
+  onSecondary
 }) {
   const targetX = TARGET_X_BY_PHASE[phase] ?? START_X
   const pose = POSE_BY_PHASE[phase] ?? 'idle'
@@ -68,7 +69,7 @@ export default function CompanionStage({
             transition={{ duration: 0.3 }}
           >
             <SpeechBubble text={dialogue} />
-            {phase === 'greeting' && <ReminderCard onDrinkNow={onDrinkNow} onSnooze={onSnooze} />}
+            {phase === 'greeting' && <ReminderCard kind={kind} onPrimary={onPrimary} onSecondary={onSecondary} />}
           </motion.div>
         )}
       </AnimatePresence>
