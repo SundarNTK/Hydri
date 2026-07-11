@@ -11,7 +11,9 @@ const POSES = [
   { id: 'idle', label: 'Idle' },
   { id: 'walking', label: 'Walking' },
   { id: 'happy', label: 'Happy (Drink Now)' },
-  { id: 'annoyed', label: 'Annoyed (Snooze)' }
+  { id: 'annoyed', label: 'Annoyed (Snooze)' },
+  { id: 'wave', label: 'Wave' },
+  { id: 'thinking', label: 'Thinking' }
 ]
 
 export default function CharacterLabPage() {

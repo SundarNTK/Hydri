@@ -64,8 +64,30 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
           ease: 'sine.inOut',
           transformOrigin: 'bottom center'
         })
+      } else if (pose === 'wave') {
+        gsap.set(leftArmRef.current, { rotate: 0 })
+        gsap.set(rightArmRef.current, { rotate: 140, svgOrigin: RIGHT_ARM_ORIGIN })
+        gsap.to(rightArmRef.current, {
+          rotate: 160,
+          svgOrigin: RIGHT_ARM_ORIGIN,
+          duration: 0.3,
+          yoyo: true,
+          repeat: -1,
+          ease: 'sine.inOut'
+        })
+        gsap.to(bodyRef.current, { y: -3, duration: 1.4, ease: 'sine.inOut', repeat: -1, yoyo: true })
+      } else if (pose === 'thinking') {
+        gsap.set(leftArmRef.current, { rotate: 0 })
+        gsap.to(rightArmRef.current, {
+          rotate: 112,
+          svgOrigin: RIGHT_ARM_ORIGIN,
+          duration: 0.4,
+          ease: 'back.out(1.6)'
+        })
+        gsap.to(rootRef.current, { rotate: -4, duration: 0.4, transformOrigin: 'bottom center' })
       } else {
         gsap.set(limbs, { rotate: 0 })
+        gsap.set(rootRef.current, { rotate: 0 })
         gsap.to(bodyRef.current, { y: -3, duration: 1.4, ease: 'sine.inOut', repeat: -1, yoyo: true })
       }
     }, rootRef)
@@ -75,6 +97,7 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
 
   const sizePx = SIZE_MAP[size] ?? SIZE_MAP.medium
   const aspect = 185 / 130
+  const showCuteEyes = pose !== 'annoyed'
 
   return (
     <div
@@ -99,9 +122,9 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
             <stop offset="100%" stopColor="#4a2c15" />
           </linearGradient>
           <linearGradient id={denimId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6d8cba" />
-            <stop offset="55%" stopColor="#4a6fa5" />
-            <stop offset="100%" stopColor="#33506e" />
+            <stop offset="0%" stopColor="#8fb0d9" />
+            <stop offset="55%" stopColor="#5b81b3" />
+            <stop offset="100%" stopColor="#3f5f7a" />
           </linearGradient>
           <linearGradient id={shoeId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#f0776c" />
@@ -136,31 +159,33 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
 
         <g ref={leftLegRef}>
           <line x1="56" y1="130" x2="48" y2="160" stroke={`url(#${denimId})`} strokeWidth="9" strokeLinecap="round" />
-          <ellipse cx="48" cy="158" rx="7" ry="4" fill="#7d97b8" />
-          <ellipse cx="48" cy="164" rx="9" ry="5.5" fill={`url(#${shoeId})`} stroke="#a02f28" strokeWidth="1.2" />
+          <ellipse cx="48" cy="158" rx="7" ry="4" fill="#a8c0e0" />
+          <ellipse cx="48" cy="163" rx="9.5" ry="3" fill="#ffffff" stroke="#d8d8d8" strokeWidth="1" />
+          <ellipse cx="48" cy="162" rx="9" ry="5" fill={`url(#${shoeId})`} stroke="#a02f28" strokeWidth="1.2" />
         </g>
         <g ref={rightLegRef}>
           <line x1="76" y1="130" x2="84" y2="160" stroke={`url(#${denimId})`} strokeWidth="9" strokeLinecap="round" />
-          <ellipse cx="84" cy="158" rx="7" ry="4" fill="#7d97b8" />
-          <ellipse cx="84" cy="164" rx="9" ry="5.5" fill={`url(#${shoeId})`} stroke="#a02f28" strokeWidth="1.2" />
+          <ellipse cx="84" cy="158" rx="7" ry="4" fill="#a8c0e0" />
+          <ellipse cx="84" cy="163" rx="9.5" ry="3" fill="#ffffff" stroke="#d8d8d8" strokeWidth="1" />
+          <ellipse cx="84" cy="162" rx="9" ry="5" fill={`url(#${shoeId})`} stroke="#a02f28" strokeWidth="1.2" />
         </g>
 
         <g ref={bodyRef}>
           {/* long hair, drawn behind the head and shoulders */}
-          <ellipse cx="65" cy="40" rx="34" ry="36" fill={`url(#${hairId})`} />
+          <ellipse cx="65" cy="38" rx="36" ry="38" fill={`url(#${hairId})`} />
           <path
-            d="M 38 42 C 20 60, 16 100, 24 150 C 30 156, 40 152, 36 142 C 30 105, 34 68, 46 46 Z"
+            d="M 34 44 C 16 58, 12 88, 20 122 C 26 130, 38 126, 34 116 C 28 90, 30 62, 44 46 Z"
             fill={`url(#${hairSideId})`}
             filter={`url(#${dropShadowId})`}
           />
           <path
-            d="M 92 42 C 112 60, 118 105, 106 155 C 100 160, 90 156, 94 146 C 102 105, 96 68, 82 46 Z"
+            d="M 96 44 C 114 58, 118 88, 110 122 C 104 130, 92 126, 96 116 C 102 90, 100 62, 86 46 Z"
             fill={`url(#${hairSideId})`}
             filter={`url(#${dropShadowId})`}
           />
           {/* rim-light along the crown, catching the light from above */}
           <path
-            d="M 40 32 Q 65 6 90 32"
+            d="M 38 30 Q 65 2 92 30"
             stroke="#c99a6f"
             strokeWidth="2.5"
             fill="none"
@@ -169,61 +194,87 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
           />
 
           {/* neck */}
-          <rect x="58" y="70" width="14" height="10" fill={`url(#${skinId})`} />
+          <rect x="58" y="72" width="14" height="10" fill={`url(#${skinId})`} />
 
           {/* white collar peeking above the overalls bib */}
           <path
-            d="M 50 76 Q 65 86 80 76 L 78 81 Q 65 90 52 81 Z"
+            d="M 50 78 Q 65 88 80 78 L 78 83 Q 65 92 52 83 Z"
             fill={`url(#${collarId})`}
             stroke="#c9c9c9"
             strokeWidth="1"
           />
 
-          {/* denim overalls: bib + shorts, straps, pocket */}
+          {/* denim overalls: bib + shorts, straps, pocket, stitched seams */}
           <path
-            d="M 48 78 L 82 78 L 86 132 Q 65 142 44 132 Z"
+            d="M 48 80 L 82 80 L 86 132 Q 65 142 44 132 Z"
             fill={`url(#${denimId})`}
             stroke="#2a4258"
             strokeWidth="2"
             filter={`url(#${dropShadowId})`}
           />
+          <path
+            d="M 48 82 L 82 82"
+            stroke="#2a4258"
+            strokeWidth="1"
+            strokeDasharray="2.5,2"
+            opacity="0.6"
+          />
           {/* rim-light along the bib's top-left edge */}
-          <path d="M 49 79 L 48 96" stroke="#a8c0e0" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
-          <rect x="50" y="66" width="7" height="14" fill={`url(#${denimId})`} stroke="#2a4258" strokeWidth="1.5" />
-          <rect x="73" y="66" width="7" height="14" fill={`url(#${denimId})`} stroke="#2a4258" strokeWidth="1.5" />
-          <rect x="57" y="98" width="16" height="13" rx="2" fill="none" stroke="#2a4258" strokeWidth="1.5" />
+          <path d="M 49 81 L 48 98" stroke="#c9dcf2" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+          <rect x="50" y="68" width="7" height="14" fill={`url(#${denimId})`} stroke="#2a4258" strokeWidth="1.5" />
+          <rect x="73" y="68" width="7" height="14" fill={`url(#${denimId})`} stroke="#2a4258" strokeWidth="1.5" />
+          <rect
+            x="57"
+            y="100"
+            width="16"
+            height="13"
+            rx="2"
+            fill="none"
+            stroke="#2a4258"
+            strokeWidth="1.5"
+            strokeDasharray="2.5,2"
+          />
 
           {/* head */}
-          <circle cx="65" cy="52" r="23" fill={`url(#${skinId})`} />
+          <circle cx="65" cy="52" r="25" fill={`url(#${skinId})`} />
           {/* soft cheek sheen */}
-          <ellipse cx="57" cy="45" rx="7" ry="5" fill="#ffffff" opacity="0.25" />
+          <ellipse cx="56" cy="44" rx="7.5" ry="5.5" fill="#ffffff" opacity="0.25" />
 
-          <ellipse cx="48" cy="60" rx="5" ry="3" fill="#ff9eb0" opacity="0.5" />
-          <ellipse cx="82" cy="60" rx="5" ry="3" fill="#ff9eb0" opacity="0.5" />
+          {/* small cute nose */}
+          <path d="M 64 61 Q 65 64 66 61" stroke="#dba171" strokeWidth="1.4" fill="none" strokeLinecap="round" />
 
-          {pose === 'annoyed' ? (
+          <ellipse cx="47" cy="61" rx="5.5" ry="3.3" fill="#ff9eb0" opacity="0.5" />
+          <ellipse cx="83" cy="61" rx="5.5" ry="3.3" fill="#ff9eb0" opacity="0.5" />
+
+          {!showCuteEyes ? (
             <>
-              <path d="M 50 42 L 60 46" stroke="#4a2f18" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M 80 42 L 70 46" stroke="#4a2f18" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M 55 68 Q 65 62 75 68" stroke="#7a3b3b" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M 50 43 L 60 47" stroke="#4a2f18" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 80 43 L 70 47" stroke="#4a2f18" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 55 69 Q 65 63 75 69" stroke="#7a3b3b" strokeWidth="3" fill="none" strokeLinecap="round" />
             </>
           ) : (
             <>
-              <path d="M 51 44 Q 57 40 63 44" stroke="#4a2f18" strokeWidth="2" fill="none" strokeLinecap="round" />
-              <path d="M 67 44 Q 73 40 79 44" stroke="#4a2f18" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <path d="M 51 45 Q 57 41 63 45" stroke="#4a2f18" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <path d="M 67 45 Q 73 41 79 45" stroke="#4a2f18" strokeWidth="2" fill="none" strokeLinecap="round" />
 
               {/* big anime eyes */}
-              <ellipse cx="57" cy="53" rx="6.5" ry="8.5" fill="#ffffff" stroke="#d8c3ab" strokeWidth="0.5" />
-              <ellipse cx="73" cy="53" rx="6.5" ry="8.5" fill="#ffffff" stroke="#d8c3ab" strokeWidth="0.5" />
-              <circle cx="57" cy="55" r="5.2" fill={`url(#${irisId})`} />
-              <circle cx="73" cy="55" r="5.2" fill={`url(#${irisId})`} />
-              <circle cx="57" cy="55" r="2.6" fill="#1a2b3d" />
-              <circle cx="73" cy="55" r="2.6" fill="#1a2b3d" />
-              <circle cx="55" cy="52" r="1.5" fill="#ffffff" />
-              <circle cx="71" cy="52" r="1.5" fill="#ffffff" />
+              <ellipse cx="57" cy="54" rx="6.8" ry="9" fill="#ffffff" stroke="#d8c3ab" strokeWidth="0.5" />
+              <ellipse cx="73" cy="54" rx="6.8" ry="9" fill="#ffffff" stroke="#d8c3ab" strokeWidth="0.5" />
+              <circle cx="57" cy="56" r="5.4" fill={`url(#${irisId})`} />
+              <circle cx="73" cy="56" r="5.4" fill={`url(#${irisId})`} />
+              <circle cx="57" cy="56" r="2.7" fill="#1a2b3d" />
+              <circle cx="73" cy="56" r="2.7" fill="#1a2b3d" />
+              <circle cx="55" cy="53" r="1.6" fill="#ffffff" />
+              <circle cx="71" cy="53" r="1.6" fill="#ffffff" />
+
+              {/* long eyelashes */}
+              <path d="M 51 48 L 47 45" stroke="#2b1b10" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M 53 46 L 51 42" stroke="#2b1b10" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M 79 48 L 83 45" stroke="#2b1b10" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M 77 46 L 79 42" stroke="#2b1b10" strokeWidth="1.2" strokeLinecap="round" />
 
               <path
-                d={pose === 'happy' ? 'M 58 67 Q 65 74 72 67' : 'M 60 67 Q 65 71 70 67'}
+                d={pose === 'happy' ? 'M 58 68 Q 65 75 72 68' : 'M 60 68 Q 65 72 70 68'}
                 stroke="#7a3b3b"
                 strokeWidth="2.5"
                 fill="none"
@@ -232,15 +283,15 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
             </>
           )}
 
-          {/* front hair lock draped over the shoulder */}
+          {/* front hair lock draped over the shoulder — kept below the head circle (r=25 @ 65,52) so it never crosses the face */}
           <path
-            d="M 82 55 C 90 70, 86 90, 92 110 C 94 115, 88 116, 86 111 C 80 92, 78 72, 76 58 Z"
+            d="M 88 80 C 96 92, 92 110, 96 128 C 98 132, 92 133, 90 128 C 86 112, 84 94, 80 82 Z"
             fill={`url(#${hairSideId})`}
             filter={`url(#${dropShadowId})`}
           />
 
           {/* rose hair clip */}
-          <g transform="translate(84, 30)" filter={`url(#${dropShadowId})`}>
+          <g transform="translate(87, 28)" filter={`url(#${dropShadowId})`}>
             <circle cx="0" cy="0" r="4.5" fill={`url(#${roseId})`} />
             <circle cx="4" cy="-2" r="4" fill={`url(#${roseId})`} />
             <circle cx="-3" cy="-3" r="3.5" fill={`url(#${roseId})`} />
@@ -251,7 +302,11 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
 
         <g ref={leftArmRef}>
           <line x1="46" y1="84" x2="28" y2="112" stroke={`url(#${collarId})`} strokeWidth="7" strokeLinecap="round" />
-          <circle cx="28" cy="112" r="5" fill={`url(#${skinId})`} />
+          <circle cx="28" cy="112" r="5.5" fill={`url(#${skinId})`} />
+          {/* tiny fingers */}
+          <path d="M 25 115 L 23 119" stroke="#eab890" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M 28 116 L 28 120" stroke="#eab890" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M 31 115 L 33 119" stroke="#eab890" strokeWidth="1.4" strokeLinecap="round" />
           {/* rose held in hand */}
           <g filter={`url(#${dropShadowId})`}>
             <line x1="26" y1="116" x2="18" y2="136" stroke="#3f8f3f" strokeWidth="2" strokeLinecap="round" />
@@ -264,7 +319,11 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
         </g>
         <g ref={rightArmRef}>
           <line x1="84" y1="84" x2="102" y2="112" stroke={`url(#${collarId})`} strokeWidth="7" strokeLinecap="round" />
-          <circle cx="102" cy="112" r="5" fill={`url(#${skinId})`} />
+          <circle cx="102" cy="112" r="5.5" fill={`url(#${skinId})`} />
+          {/* tiny fingers */}
+          <path d="M 99 115 L 97 119" stroke="#eab890" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M 102 116 L 102 120" stroke="#eab890" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M 105 115 L 107 119" stroke="#eab890" strokeWidth="1.4" strokeLinecap="round" />
         </g>
       </svg>
 
