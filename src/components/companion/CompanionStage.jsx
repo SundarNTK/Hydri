@@ -5,7 +5,9 @@ import ReminderCard from './ReminderCard.jsx'
 
 const START_X = -260
 const ENTER_X = 160
-const EXIT_X = 820
+// She always arrives and leaves via the same (left) edge of the overlay
+// window, rather than continuing off the far side — see CompanionStage docs.
+const EXIT_X = -300
 
 const TARGET_X_BY_PHASE = {
   hidden: START_X,

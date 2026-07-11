@@ -13,7 +13,7 @@ const schema = {
   reminderPosition: { type: 'string', enum: ['bottom-left', 'bottom-right'], default: 'bottom-left' },
   characterSize: { type: 'string', enum: ['small', 'medium', 'large'], default: 'medium' },
   // Keep in sync with the `id`s in src/components/companion/characters/index.js
-  characterId: { type: 'string', enum: ['girl', 'waterdrop'], default: 'girl' },
+  characterId: { type: 'string', enum: ['girl', 'boy', 'waterdrop', 'leafbuddy'], default: 'girl' },
   remindersPaused: { type: 'boolean', default: false }
 }
 
