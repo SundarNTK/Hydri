@@ -50,7 +50,7 @@ export function createStandUpReminder({ settingsStore, notifier, getCompanionWin
     const companionWindow = getCompanionWindow()
     if (companionWindow) {
       companionWindow.show()
-      companionWindow.webContents.send('reminder:trigger', {
+      companionWindow.sendReminderTrigger({
         kind: 'standup',
         dialogue: pickRandom(DIALOGUE.greeting(settingsStore.get('userName')))
       })

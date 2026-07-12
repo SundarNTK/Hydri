@@ -59,27 +59,6 @@ export default function LeafBuddyMascot({ pose = 'idle', size = 'medium', facing
           ease: 'sine.inOut',
           transformOrigin: 'bottom center'
         })
-      } else if (pose === 'wave') {
-        gsap.set(leftArmRef.current, { rotate: 0 })
-        gsap.set(rightArmRef.current, { rotate: 130, svgOrigin: RIGHT_ARM_ORIGIN })
-        gsap.to(rightArmRef.current, {
-          rotate: 150,
-          svgOrigin: RIGHT_ARM_ORIGIN,
-          duration: 0.3,
-          yoyo: true,
-          repeat: -1,
-          ease: 'sine.inOut'
-        })
-        gsap.to(bodyRef.current, { y: -3, duration: 1.4, ease: 'sine.inOut', repeat: -1, yoyo: true })
-      } else if (pose === 'thinking') {
-        gsap.set(leftArmRef.current, { rotate: 0 })
-        gsap.to(rightArmRef.current, {
-          rotate: 105,
-          svgOrigin: RIGHT_ARM_ORIGIN,
-          duration: 0.4,
-          ease: 'back.out(1.6)'
-        })
-        gsap.to(rootRef.current, { rotate: -4, duration: 0.4, transformOrigin: 'bottom center' })
       } else {
         gsap.set(limbs, { rotate: 0 })
         gsap.set(rootRef.current, { rotate: 0 })

@@ -33,7 +33,7 @@ export function createBatteryReminderPresenter({ getCompanionWindow, batteryMoni
     const companionWindow = getCompanionWindow()
     if (companionWindow) {
       companionWindow.show()
-      companionWindow.webContents.send('reminder:trigger', {
+      companionWindow.sendReminderTrigger({
         kind: 'battery',
         dialogue: pickRandom(dialogueSet)
       })

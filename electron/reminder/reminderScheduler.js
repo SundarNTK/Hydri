@@ -60,7 +60,7 @@ export function createReminderScheduler({ settingsStore, waterService, notifier,
     const companionWindow = getCompanionWindow()
     if (companionWindow) {
       companionWindow.show()
-      companionWindow.webContents.send('reminder:trigger', payload)
+      companionWindow.sendReminderTrigger(payload)
     }
     notifier.notifyReminder()
   }
