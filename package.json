@@ -13,7 +13,8 @@
     "start": "electron-vite preview",
     "postinstall": "electron-builder install-app-deps",
     "generate-icons": "node scripts/generate-icons.js",
-    "dist": "npm run build && electron-builder --win"
+    "dist": "npm run build && electron-builder --win",
+    "dist:portable": "npm run build && electron-packager . Hydri --platform=win32 --arch=x64 --icon=build/icon.ico --extra-resource=build/icon-square.png --out=release-portable --overwrite --ignore=\"^/(src|electron|tools|tests|\\.git|release|release-portable|scripts)($|/)\""
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
@@ -32,6 +33,7 @@
     "autoprefixer": "^10.4.20",
     "electron": "^33.3.1",
     "electron-builder": "^25.1.8",
+    "electron-packager": "^17.1.2",
     "electron-vite": "^3.0.0",
     "jimp": "^1.6.1",
     "png-to-ico": "^2.1.8",
@@ -53,13 +55,19 @@
     "extraResources": [
       {
         "from": "build/icon-square.png",
-        "to": "icon.png"
+        "to": "icon-square.png"
       }
     ],
     "win": {
       "target": [
         {
           "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
           "arch": [
             "x64"
           ]
