@@ -5,11 +5,12 @@ import { applyWalkCycle } from '../walkCycle.js'
 
 const SIZE_MAP = { small: 90, medium: 130, large: 180 }
 
-// Same rig proportions as WaterDropMascot.jsx.
-const LEFT_LEG_ORIGIN = '52 112'
-const RIGHT_LEG_ORIGIN = '68 112'
-const LEFT_ARM_ORIGIN = '30 88'
-const RIGHT_ARM_ORIGIN = '90 88'
+// A distinct head + torso (like Girl/Boy) rather than the water-drop's
+// single teardrop silhouette -- this is meant to read as an actual cat.
+const LEFT_LEG_ORIGIN = '54 128'
+const RIGHT_LEG_ORIGIN = '76 128'
+const LEFT_ARM_ORIGIN = '42 96'
+const RIGHT_ARM_ORIGIN = '88 96'
 
 export default function CatMascot({ pose = 'idle', size = 'medium', facingLeft = false }) {
   const rootRef = useRef(null)
@@ -35,7 +36,7 @@ export default function CatMascot({ pose = 'idle', size = 'medium', facingLeft =
       // touch of continuous life even when idle.
       gsap.to(tailRef.current, {
         rotate: 14,
-        svgOrigin: '92 100',
+        svgOrigin: '92 112',
         duration: 0.9,
         ease: 'sine.inOut',
         repeat: -1,
@@ -104,14 +105,16 @@ export default function CatMascot({ pose = 'idle', size = 'medium', facingLeft =
   }, [pose])
 
   const sizePx = SIZE_MAP[size] ?? SIZE_MAP.medium
+  const aspect = 175 / 130
+  const showCuteEyes = pose !== 'annoyed'
 
   return (
     <div
       ref={rootRef}
-      style={{ width: sizePx, height: sizePx * 1.25, transform: facingLeft ? 'scaleX(-1)' : 'none' }}
+      style={{ width: sizePx, height: sizePx * aspect, transform: facingLeft ? 'scaleX(-1)' : 'none' }}
       className="relative"
     >
-      <svg viewBox="0 0 120 150" width="100%" height="100%">
+      <svg viewBox="0 0 130 175" width="100%" height="100%">
         <defs>
           <linearGradient id={furId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#f4a856" />
@@ -130,12 +133,12 @@ export default function CatMascot({ pose = 'idle', size = 'medium', facingLeft =
           </filter>
         </defs>
 
-        <ellipse cx="60" cy="145" rx="28" ry="7" fill={`url(#${shadowId})`} />
+        <ellipse cx="65" cy="168" rx="30" ry="7" fill={`url(#${shadowId})`} />
 
         {/* tail, drawn behind everything */}
         <path
           ref={tailRef}
-          d="M 92 100 C 108 96, 112 78, 100 66"
+          d="M 90 115 C 110 110, 118 90, 104 74"
           stroke={`url(#${furId})`}
           strokeWidth="9"
           strokeLinecap="round"
@@ -143,63 +146,70 @@ export default function CatMascot({ pose = 'idle', size = 'medium', facingLeft =
         />
 
         <g ref={leftLegRef}>
-          <line x1="52" y1="112" x2="46" y2="140" stroke={`url(#${furId})`} strokeWidth="8" strokeLinecap="round" />
-          <ellipse cx="46" cy="142" rx="6.5" ry="4" fill={`url(#${furId})`} />
+          <line x1="54" y1="128" x2="48" y2="154" stroke={`url(#${furId})`} strokeWidth="8.5" strokeLinecap="round" />
+          <ellipse cx="48" cy="157" rx="7" ry="4.5" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="1" />
         </g>
         <g ref={rightLegRef}>
-          <line x1="68" y1="112" x2="74" y2="140" stroke={`url(#${furId})`} strokeWidth="8" strokeLinecap="round" />
-          <ellipse cx="74" cy="142" rx="6.5" ry="4" fill={`url(#${furId})`} />
+          <line x1="76" y1="128" x2="82" y2="154" stroke={`url(#${furId})`} strokeWidth="8.5" strokeLinecap="round" />
+          <ellipse cx="82" cy="157" rx="7" ry="4.5" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="1" />
         </g>
 
         <g ref={bodyRef}>
-          {/* pointed ears */}
-          <path d="M 34 42 L 28 18 L 50 34 Z" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="2" />
-          <path d="M 86 42 L 92 18 L 70 34 Z" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="2" />
-          <path d="M 35 36 L 32 24 L 44 33 Z" fill="#ffc9d6" opacity="0.8" />
-          <path d="M 85 36 L 88 24 L 76 33 Z" fill="#ffc9d6" opacity="0.8" />
-
-          {/* head + body */}
+          {/* torso, separate from the head */}
           <path
-            d="M60 8 C 90 45, 108 70, 108 92 A 48 48 0 1 1 12 92 C 12 70, 30 45, 60 8 Z"
+            d="M 40 98 Q 65 88 90 98 L 94 130 Q 65 142 36 130 Z"
             fill={`url(#${furId})`}
             stroke="#b56b1f"
             strokeWidth="2"
             filter={`url(#${dropShadowId})`}
           />
-          <path d="M 60 60 C 78 62, 88 78, 84 98 C 70 106, 50 106, 36 98 C 32 78, 42 62, 60 60 Z" fill={`url(#${bellyId})`} />
+          <path d="M 48 104 Q 65 98 82 104 L 84 128 Q 65 136 46 128 Z" fill={`url(#${bellyId})`} />
 
-          {/* tabby stripes */}
-          <path d="M 46 30 Q 50 22 56 20" stroke="#b56b1f" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.6" />
-          <path d="M 74 30 Q 70 22 64 20" stroke="#b56b1f" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.6" />
+          {/* neck */}
+          <rect x="57" y="82" width="16" height="14" fill={`url(#${furId})`} />
+
+          {/* pointed ears, behind the head */}
+          <path d="M 42 40 L 34 14 L 60 32 Z" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="2" />
+          <path d="M 88 40 L 96 14 L 70 32 Z" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="2" />
+          <path d="M 43 34 L 39 20 L 53 31 Z" fill="#ffc9d6" opacity="0.85" />
+          <path d="M 87 34 L 91 20 L 77 31 Z" fill="#ffc9d6" opacity="0.85" />
+
+          {/* head */}
+          <circle cx="65" cy="56" r="28" fill={`url(#${furId})`} />
+          <ellipse cx="55" cy="47" rx="8" ry="6" fill="#ffffff" opacity="0.2" />
+
+          {/* tabby stripes on the forehead */}
+          <path d="M 50 34 Q 55 26 62 24" stroke="#b56b1f" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.5" />
+          <path d="M 80 34 Q 75 26 68 24" stroke="#b56b1f" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.5" />
 
           {/* whiskers */}
-          <path d="M 30 82 L 12 78" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
-          <path d="M 30 88 L 10 88" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
-          <path d="M 90 82 L 108 78" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
-          <path d="M 90 88 L 110 88" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
+          <path d="M 36 62 L 16 58" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
+          <path d="M 36 68 L 14 68" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
+          <path d="M 94 62 L 114 58" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
+          <path d="M 94 68 L 116 68" stroke="#7a4a1a" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
 
-          <ellipse cx="42" cy="90" rx="5" ry="3" fill="#ff9eb0" opacity="0.5" />
-          <ellipse cx="78" cy="90" rx="5" ry="3" fill="#ff9eb0" opacity="0.5" />
+          <ellipse cx="46" cy="66" rx="5" ry="3" fill="#ff9eb0" opacity="0.5" />
+          <ellipse cx="84" cy="66" rx="5" ry="3" fill="#ff9eb0" opacity="0.5" />
 
-          {pose === 'annoyed' ? (
+          {!showCuteEyes ? (
             <>
-              <path d="M 40 76 L 52 80" stroke="#3a2410" strokeWidth="3.5" strokeLinecap="round" />
-              <path d="M 80 76 L 68 80" stroke="#3a2410" strokeWidth="3.5" strokeLinecap="round" />
-              <path d="M 52 98 Q 60 92 68 98" stroke="#3a2410" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M 46 50 L 58 55" stroke="#3a2410" strokeWidth="3" strokeLinecap="round" />
+              <path d="M 84 50 L 72 55" stroke="#3a2410" strokeWidth="3" strokeLinecap="round" />
+              <path d="M 55 76 Q 65 70 75 76" stroke="#3a2410" strokeWidth="3" fill="none" strokeLinecap="round" />
             </>
           ) : (
             <>
-              <circle cx="48" cy="80" r="5" fill="#ffffff" />
-              <circle cx="72" cy="80" r="5" fill="#ffffff" />
-              <circle cx="49" cy="81" r="3.4" fill="#4caf50" />
-              <circle cx="71" cy="81" r="3.4" fill="#4caf50" />
-              <circle cx="49" cy="81" r="1.6" fill="#111" />
-              <circle cx="71" cy="81" r="1.6" fill="#111" />
-              <circle cx="47" cy="79" r="1" fill="#ffffff" />
-              <circle cx="69" cy="79" r="1" fill="#ffffff" />
-              <path d="M 58 92 L 62 92" stroke="#b56b1f" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="53" cy="55" r="5.4" fill="#ffffff" />
+              <circle cx="77" cy="55" r="5.4" fill="#ffffff" />
+              <circle cx="54" cy="56" r="3.7" fill="#4caf50" />
+              <circle cx="76" cy="56" r="3.7" fill="#4caf50" />
+              <circle cx="54" cy="56" r="1.8" fill="#111" />
+              <circle cx="76" cy="56" r="1.8" fill="#111" />
+              <circle cx="52" cy="53" r="1.1" fill="#ffffff" />
+              <circle cx="74" cy="53" r="1.1" fill="#ffffff" />
+              <path d="M 63 67 L 67 67" stroke="#b56b1f" strokeWidth="2" strokeLinecap="round" />
               <path
-                d={pose === 'happy' ? 'M 48 98 Q 60 108 72 98' : 'M 52 96 Q 60 100 68 96'}
+                d={pose === 'happy' ? 'M 52 73 Q 65 84 78 73' : 'M 56 71 Q 65 76 74 71'}
                 stroke="#3a2410"
                 strokeWidth="2.5"
                 fill="none"
@@ -210,10 +220,12 @@ export default function CatMascot({ pose = 'idle', size = 'medium', facingLeft =
         </g>
 
         <g ref={leftArmRef}>
-          <line x1="30" y1="88" x2="16" y2="108" stroke={`url(#${furId})`} strokeWidth="7" strokeLinecap="round" />
+          <line x1="42" y1="96" x2="26" y2="118" stroke={`url(#${furId})`} strokeWidth="7" strokeLinecap="round" />
+          <ellipse cx="26" cy="120" rx="5.5" ry="4" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="1" />
         </g>
         <g ref={rightArmRef}>
-          <line x1="90" y1="88" x2="104" y2="108" stroke={`url(#${furId})`} strokeWidth="7" strokeLinecap="round" />
+          <line x1="88" y1="96" x2="104" y2="118" stroke={`url(#${furId})`} strokeWidth="7" strokeLinecap="round" />
+          <ellipse cx="104" cy="120" rx="5.5" ry="4" fill={`url(#${furId})`} stroke="#b56b1f" strokeWidth="1" />
         </g>
       </svg>
 
