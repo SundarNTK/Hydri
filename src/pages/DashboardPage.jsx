@@ -15,9 +15,14 @@ export default function DashboardPage() {
   const { stats, refresh } = useWaterStats()
   const { settings } = useSettings()
   const [version, setVersion] = useState('')
+  const [updateReady, setUpdateReady] = useState(false)
 
   useEffect(() => {
     api.app.getVersion().then(setVersion)
+  }, [])
+
+  useEffect(() => {
+    return api.updater.onReadyToInstall(() => setUpdateReady(true))
   }, [])
 
   if (!stats) {
@@ -33,6 +38,19 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-emerald-50 p-6 dark:from-slate-900 dark:to-slate-950">
+      {updateReady && (
+        <div className="mb-4 flex items-center justify-between rounded-xl border border-hydri-blue/30 bg-hydri-blue/10 px-4 py-3 text-sm">
+          <span className="font-medium text-hydri-ink dark:text-white">
+            🎉 A new version of Hydri has been downloaded and is ready to install.
+          </span>
+          <button
+            onClick={() => api.updater.quitAndInstall()}
+            className="rounded-full bg-hydri-blue px-3 py-1.5 text-sm font-semibold text-white shadow-glass transition hover:bg-hydri-blue-dark active:scale-95"
+          >
+            Restart & Update
+          </button>
+        </div>
+      )}
       <header className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Logo size={40} />
