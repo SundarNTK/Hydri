@@ -15,15 +15,25 @@ export default function DashboardPage() {
   const { stats, refresh } = useWaterStats()
   const { settings } = useSettings()
   const [version, setVersion] = useState('')
-  const [updateReady, setUpdateReady] = useState(false)
+  const [updateStatus, setUpdateStatus] = useState({ state: 'idle' })
 
   useEffect(() => {
     api.app.getVersion().then(setVersion)
   }, [])
 
   useEffect(() => {
-    return api.updater.onReadyToInstall(() => setUpdateReady(true))
+    // Sync current status on mount too -- a check triggered at app startup can
+    // finish (e.g. a fast differential download) before this page mounts, so
+    // the one-shot event alone could otherwise be missed entirely.
+    api.updater.getStatus().then(setUpdateStatus)
+    return api.updater.onStatus(setUpdateStatus)
   }, [])
+
+  useEffect(() => {
+    if (updateStatus.state !== 'not-available' && updateStatus.state !== 'error') return
+    const timeout = setTimeout(() => setUpdateStatus({ state: 'idle' }), 4000)
+    return () => clearTimeout(timeout)
+  }, [updateStatus])
 
   if (!stats) {
     return (
@@ -38,7 +48,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-emerald-50 p-6 dark:from-slate-900 dark:to-slate-950">
-      {updateReady && (
+      {updateStatus.state === 'ready' && (
         <div className="mb-4 flex items-center justify-between rounded-xl border border-hydri-blue/30 bg-hydri-blue/10 px-4 py-3 text-sm">
           <span className="font-medium text-hydri-ink dark:text-white">
             🎉 A new version of Hydri has been downloaded and is ready to install.
@@ -49,6 +59,26 @@ export default function DashboardPage() {
           >
             Restart & Update
           </button>
+        </div>
+      )}
+      {updateStatus.state === 'downloading' && (
+        <div className="mb-4 rounded-xl border border-hydri-blue/30 bg-hydri-blue/10 px-4 py-3 text-sm font-medium text-hydri-ink dark:text-white">
+          ⬇️ Downloading update{updateStatus.version ? ` v${updateStatus.version}` : ''}…
+        </div>
+      )}
+      {updateStatus.state === 'checking' && (
+        <div className="mb-4 rounded-xl border border-white/30 bg-white/50 px-4 py-3 text-sm font-medium text-hydri-ink/70 dark:border-white/10 dark:bg-slate-800/40 dark:text-white/60">
+          🔄 Checking for updates…
+        </div>
+      )}
+      {updateStatus.state === 'not-available' && (
+        <div className="mb-4 rounded-xl border border-hydri-leaf/30 bg-hydri-leaf/10 px-4 py-3 text-sm font-medium text-hydri-ink dark:text-white">
+          ✅ You're up to date{version ? ` (v${version})` : ''}.
+        </div>
+      )}
+      {updateStatus.state === 'error' && (
+        <div className="mb-4 rounded-xl border border-red-300/40 bg-red-50/60 px-4 py-3 text-sm font-medium text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
+          ⚠️ {updateStatus.message ?? 'Could not check for updates.'}
         </div>
       )}
       <header className="mb-6 flex items-center justify-between">
@@ -67,6 +97,13 @@ export default function DashboardPage() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => api.updater.checkNow()}
+            disabled={updateStatus.state === 'checking' || updateStatus.state === 'downloading'}
+            className="rounded-full border border-white/30 bg-white/60 px-3 py-1.5 text-sm font-medium text-hydri-ink shadow-glass backdrop-blur-glass transition hover:bg-white/80 disabled:opacity-50 dark:border-white/10 dark:bg-slate-800/50 dark:text-slate-100"
+          >
+            🔄 Check for Updates
+          </button>
           <Link
             to="/character-lab"
             className="rounded-full border border-white/30 bg-white/60 px-3 py-1.5 text-sm font-medium text-hydri-ink shadow-glass backdrop-blur-glass transition hover:bg-white/80 dark:border-white/10 dark:bg-slate-800/50 dark:text-slate-100"

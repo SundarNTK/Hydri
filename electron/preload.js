@@ -37,7 +37,8 @@ contextBridge.exposeInMainWorld('hydri', {
   updater: {
     checkNow: () => ipcRenderer.invoke('updater:checkNow'),
     quitAndInstall: () => ipcRenderer.invoke('updater:quitAndInstall'),
-    onReadyToInstall: (callback) => subscribe('updater:ready-to-install', callback)
+    getStatus: () => ipcRenderer.invoke('updater:getStatus'),
+    onStatus: (callback) => subscribe('updater:status', callback)
   },
   app: {
     getVersion: () => ipcRenderer.invoke('app:getVersion')

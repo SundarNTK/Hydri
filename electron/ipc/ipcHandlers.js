@@ -53,6 +53,7 @@ export function registerIpcHandlers({
 
   ipcMain.handle('updater:checkNow', () => updaterService.checkForUpdates())
   ipcMain.handle('updater:quitAndInstall', () => updaterService.quitAndInstall())
+  ipcMain.handle('updater:getStatus', () => updaterService.getStatus())
 
   ipcMain.handle('app:getVersion', () => app.getVersion())
 

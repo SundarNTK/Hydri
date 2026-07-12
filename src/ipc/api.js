@@ -36,7 +36,8 @@ export const api = {
   updater: {
     checkNow: () => bridge().updater.checkNow(),
     quitAndInstall: () => bridge().updater.quitAndInstall(),
-    onReadyToInstall: (callback) => bridge().updater.onReadyToInstall(callback)
+    getStatus: () => bridge().updater.getStatus(),
+    onStatus: (callback) => bridge().updater.onStatus(callback)
   },
   app: {
     getVersion: () => bridge().app.getVersion()
