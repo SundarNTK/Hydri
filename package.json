@@ -1,7 +1,7 @@
 {
   "name": "hydri",
   "productName": "Hydri",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hydri — Your Caring Health Companion. An intelligent desktop hydration companion.",
   "author": "Hydri",
   "main": "./out/main/main.js",

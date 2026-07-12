@@ -1,6 +1,7 @@
+import { powerMonitor } from 'electron'
 import si from 'systeminformation'
 
-const POLL_INTERVAL_MS = 5 * 60 * 1000 // battery % changes slowly; no need to poll more often
+const POLL_INTERVAL_MS = 2 * 60 * 1000 // safety-net poll; the real responsiveness comes from powerMonitor events below
 
 const NEAR_FULL_THRESHOLD = 95
 const FULL_THRESHOLD = 100
@@ -17,6 +18,11 @@ const FULL_THRESHOLD = 100
  * than repeating on every poll, and both reset together once unplugged (or
  * the level drops back below 95%), so a fresh charge cycle gets its own
  * pair of reminders instead of nagging every five minutes.
+ *
+ * Checks run on a slow interval as a safety net, but the responsive path is
+ * Electron's powerMonitor events: 'on-ac' fires the instant a charger is
+ * plugged in, and 'resume' fires after the laptop wakes from sleep (both
+ * moments where the interval alone could miss a change for minutes).
  */
 export function createBatteryMonitor({ settingsStore, onMilestone }) {
   let timer = null
@@ -70,11 +76,15 @@ export function createBatteryMonitor({ settingsStore, onMilestone }) {
     if (timer) return
     poll()
     timer = setInterval(poll, POLL_INTERVAL_MS)
+    powerMonitor.on('on-ac', poll)
+    powerMonitor.on('resume', poll)
   }
 
   function stop() {
     if (timer) clearInterval(timer)
     timer = null
+    powerMonitor.removeListener('on-ac', poll)
+    powerMonitor.removeListener('resume', poll)
   }
 
   return { start, stop, snooze, acknowledge }
