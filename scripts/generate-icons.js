@@ -3,7 +3,7 @@ const { Jimp } = require('jimp')
 const { writeFile } = require('node:fs/promises')
 const { resolve } = require('node:path')
 
-const source = resolve(__dirname, '../build/icon-source.png')
+const source = resolve(__dirname, '../src/assets/hydri-logo.png')
 const squaredPath = resolve(__dirname, '../build/icon-square.png')
 const destination = resolve(__dirname, '../build/icon.ico')
 
