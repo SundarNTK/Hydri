@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 const INTERVAL_OPTIONS = [15, 30, 45, 60, 90, 120]
+const STANDUP_INTERVAL_OPTIONS = [30, 45, 60, 90, 120]
 
 const selectClass =
   'w-full rounded-lg border border-black/10 bg-white/80 px-3 py-2 text-sm text-hydri-ink shadow-sm transition focus:border-hydri-blue focus:outline-none focus:ring-2 focus:ring-hydri-blue/20 dark:border-white/10 dark:bg-slate-900/60 dark:text-white'
@@ -211,6 +212,27 @@ export default function SettingsForm({ settings, onUpdate }) {
           checked={settings.batteryReminderEnabled}
           onChange={(checked) => onUpdate({ batteryReminderEnabled: checked })}
         />
+      </Section>
+
+      <Section title="Movement" icon="🚶">
+        <ToggleField
+          label="Remind me to stand up and walk"
+          checked={settings.standUpReminderEnabled}
+          onChange={(checked) => onUpdate({ standUpReminderEnabled: checked })}
+        />
+        <Field label="Stand-up interval">
+          <select
+            value={settings.standUpIntervalMinutes}
+            onChange={(event) => onUpdate({ standUpIntervalMinutes: Number(event.target.value) })}
+            className={selectClass}
+          >
+            {STANDUP_INTERVAL_OPTIONS.map((minutes) => (
+              <option key={minutes} value={minutes}>
+                {minutes} minutes
+              </option>
+            ))}
+          </select>
+        </Field>
       </Section>
 
       <Section title="Startup & Updates" icon="🚀">

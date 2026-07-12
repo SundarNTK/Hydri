@@ -1,6 +1,7 @@
 const LABELS = {
   water: { primary: '💧 Drink Now', secondary: '⏰ Remind Me in 5 Minutes' },
-  battery: { primary: '🔌 Got It!', secondary: '⏰ Remind Me in 10 Minutes' }
+  battery: { primary: '🔌 Got It!', secondary: '⏰ Remind Me in 10 Minutes' },
+  standup: { primary: '🚶 Done, I Walked!', secondary: '⏰ Remind Me in 10 Minutes' }
 }
 
 export default function ReminderCard({ kind = 'water', onPrimary, onSecondary }) {

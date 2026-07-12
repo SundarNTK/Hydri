@@ -11,6 +11,7 @@ import { createReminderScheduler } from './reminder/reminderScheduler.js'
 import { createNotifier } from './reminder/notifier.js'
 import { createBatteryMonitor } from './services/batteryMonitor.js'
 import { createBatteryReminderPresenter } from './reminder/batteryReminder.js'
+import { createStandUpReminder } from './reminder/standUpReminder.js'
 import { registerIpcHandlers } from './ipc/ipcHandlers.js'
 import { createUpdaterService } from './services/updaterService.js'
 
@@ -90,6 +91,13 @@ app.whenReady().then(() => {
   })
   batteryMonitor.start()
 
+  const standUpReminder = createStandUpReminder({
+    settingsStore,
+    notifier,
+    getCompanionWindow: () => companionWindow
+  })
+  standUpReminder.start()
+
   const updaterService = createUpdaterService({ settingsStore, getMainWindow: () => mainWindow })
 
   registerIpcHandlers({
@@ -97,6 +105,7 @@ app.whenReady().then(() => {
     settingsStore,
     scheduler,
     batteryReminder,
+    standUpReminder,
     updaterService,
     getCompanionWindow: () => companionWindow
   })

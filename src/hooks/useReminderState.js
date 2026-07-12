@@ -25,7 +25,12 @@ export function useReminderState() {
   }, [])
 
   const primaryAction = useCallback(async () => {
-    const result = kind === 'battery' ? await api.battery.acknowledge() : await api.reminders.respondDrink()
+    const result =
+      kind === 'battery'
+        ? await api.battery.acknowledge()
+        : kind === 'standup'
+          ? await api.standup.respondDone()
+          : await api.reminders.respondDrink()
     if (result?.dialogue) setDialogue(result.dialogue)
     setPhase('happy')
     return result
@@ -34,7 +39,11 @@ export function useReminderState() {
   const secondaryAction = useCallback(
     async (minutes) => {
       const result =
-        kind === 'battery' ? await api.battery.snooze(minutes ?? 10) : await api.reminders.respondSnooze(minutes ?? 5)
+        kind === 'battery'
+          ? await api.battery.snooze(minutes ?? 10)
+          : kind === 'standup'
+            ? await api.standup.respondSnooze(minutes ?? 10)
+            : await api.reminders.respondSnooze(minutes ?? 5)
       if (result?.dialogue) setDialogue(result.dialogue)
       setPhase('annoyed')
       return result

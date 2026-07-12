@@ -3,8 +3,8 @@ import Store from 'electron-store'
 const schema = {
   userName: { type: 'string', default: '' },
   onboardingSeen: { type: 'boolean', default: false },
-  reminderInterval: { type: 'number', default: 60 },
-  customIntervalMinutes: { type: 'number', default: 60 },
+  reminderInterval: { type: 'number', default: 30 },
+  customIntervalMinutes: { type: 'number', default: 30 },
   dailyGoalMl: { type: 'number', default: 2000 },
   theme: { type: 'string', enum: ['light', 'dark'], default: 'light' },
   soundEnabled: { type: 'boolean', default: true },
@@ -17,7 +17,9 @@ const schema = {
   // Keep in sync with the `id`s in src/components/companion/characters/index.js
   characterId: { type: 'string', enum: ['girl', 'boy', 'waterdrop', 'leafbuddy', 'cat', 'dog'], default: 'girl' },
   remindersPaused: { type: 'boolean', default: false },
-  batteryReminderEnabled: { type: 'boolean', default: true }
+  batteryReminderEnabled: { type: 'boolean', default: true },
+  standUpReminderEnabled: { type: 'boolean', default: true },
+  standUpIntervalMinutes: { type: 'number', default: 60 }
 }
 
 export function createSettingsStore() {

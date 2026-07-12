@@ -1,7 +1,7 @@
 {
   "name": "hydri",
   "productName": "Hydri",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Hydri — Your Caring Health Companion. An intelligent desktop hydration companion.",
   "author": "Hydri",
   "main": "./out/main/main.js",
@@ -13,7 +13,8 @@
     "start": "electron-vite preview",
     "postinstall": "electron-builder install-app-deps",
     "generate-icons": "node scripts/generate-icons.js",
-    "dist": "npm run build && electron-builder --win"
+    "dist": "npm run build && electron-builder --win",
+    "dist:publish": "npm run build && electron-builder --win --publish always"
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",

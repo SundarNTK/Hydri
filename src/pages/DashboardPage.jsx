@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWaterStats } from '../hooks/useWaterStats.js'
 import { useSettings } from '../hooks/useSettings.js'
@@ -13,6 +14,11 @@ import AchievementGrid from '../components/dashboard/AchievementGrid.jsx'
 export default function DashboardPage() {
   const { stats, refresh } = useWaterStats()
   const { settings } = useSettings()
+  const [version, setVersion] = useState('')
+
+  useEffect(() => {
+    api.app.getVersion().then(setVersion)
+  }, [])
 
   if (!stats) {
     return (
@@ -36,6 +42,11 @@ export default function DashboardPage() {
             </h1>
             <p className="text-sm text-hydri-ink/60 dark:text-white/50">Your Caring Health Companion</p>
           </div>
+          {version && (
+            <span className="rounded-full border border-white/30 bg-white/50 px-2 py-0.5 text-xs font-medium text-hydri-ink/50 dark:border-white/10 dark:bg-slate-800/40 dark:text-white/40">
+              v{version}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Link

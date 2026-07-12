@@ -33,6 +33,15 @@ export default function CharacterLabPage() {
     }
   }
 
+  const handleTriggerStandUp = async () => {
+    setTriggering(true)
+    try {
+      await api.standup.triggerNow()
+    } finally {
+      setTimeout(() => setTriggering(false), 2000)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-emerald-50 p-6 dark:from-slate-900 dark:to-slate-950">
       <header className="mb-6 flex items-center justify-between">
@@ -76,13 +85,22 @@ export default function CharacterLabPage() {
                 </button>
               ))}
             </div>
-            <button
-              onClick={handleTriggerReal}
-              disabled={triggering}
-              className="mt-2 rounded-full border border-hydri-leaf/40 bg-hydri-leaf/10 px-4 py-2 text-sm font-semibold text-hydri-ink shadow-glass transition hover:bg-hydri-leaf/20 active:scale-95 disabled:opacity-50 dark:text-white"
-            >
-              {triggering ? 'Watch the overlay window…' : '🔔 Trigger a Real Reminder'}
-            </button>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button
+                onClick={handleTriggerReal}
+                disabled={triggering}
+                className="rounded-full border border-hydri-leaf/40 bg-hydri-leaf/10 px-4 py-2 text-sm font-semibold text-hydri-ink shadow-glass transition hover:bg-hydri-leaf/20 active:scale-95 disabled:opacity-50 dark:text-white"
+              >
+                {triggering ? 'Watch the overlay window…' : '💧 Trigger Water Reminder'}
+              </button>
+              <button
+                onClick={handleTriggerStandUp}
+                disabled={triggering}
+                className="rounded-full border border-hydri-leaf/40 bg-hydri-leaf/10 px-4 py-2 text-sm font-semibold text-hydri-ink shadow-glass transition hover:bg-hydri-leaf/20 active:scale-95 disabled:opacity-50 dark:text-white"
+              >
+                {triggering ? 'Watch the overlay window…' : '🚶 Trigger Stand-Up Reminder'}
+              </button>
+            </div>
           </div>
         </div>
       </GlassCard>

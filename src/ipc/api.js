@@ -28,10 +28,18 @@ export const api = {
     acknowledge: () => bridge().battery.acknowledge(),
     snooze: (minutes) => bridge().battery.snooze(minutes)
   },
+  standup: {
+    triggerNow: () => bridge().standup.triggerNow(),
+    respondDone: () => bridge().standup.respondDone(),
+    respondSnooze: (minutes) => bridge().standup.respondSnooze(minutes)
+  },
   updater: {
     checkNow: () => bridge().updater.checkNow(),
     quitAndInstall: () => bridge().updater.quitAndInstall(),
     onReadyToInstall: (callback) => bridge().updater.onReadyToInstall(callback)
+  },
+  app: {
+    getVersion: () => bridge().app.getVersion()
   },
   companion: {
     hide: () => bridge().companion.hide()

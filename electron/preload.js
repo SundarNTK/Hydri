@@ -29,10 +29,18 @@ contextBridge.exposeInMainWorld('hydri', {
     acknowledge: () => ipcRenderer.invoke('battery:acknowledge'),
     snooze: (minutes) => ipcRenderer.invoke('battery:snooze', minutes)
   },
+  standup: {
+    triggerNow: () => ipcRenderer.invoke('standup:triggerNow'),
+    respondDone: () => ipcRenderer.invoke('standup:respondDone'),
+    respondSnooze: (minutes) => ipcRenderer.invoke('standup:respondSnooze', minutes)
+  },
   updater: {
     checkNow: () => ipcRenderer.invoke('updater:checkNow'),
     quitAndInstall: () => ipcRenderer.invoke('updater:quitAndInstall'),
     onReadyToInstall: (callback) => subscribe('updater:ready-to-install', callback)
+  },
+  app: {
+    getVersion: () => ipcRenderer.invoke('app:getVersion')
   },
   companion: {
     hide: () => ipcRenderer.invoke('companion:hide')

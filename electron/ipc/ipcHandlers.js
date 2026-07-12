@@ -5,6 +5,7 @@ export function registerIpcHandlers({
   settingsStore,
   scheduler,
   batteryReminder,
+  standUpReminder,
   updaterService,
   getCompanionWindow
 }) {
@@ -46,8 +47,14 @@ export function registerIpcHandlers({
   ipcMain.handle('battery:acknowledge', () => batteryReminder.acknowledge())
   ipcMain.handle('battery:snooze', (_event, minutes) => batteryReminder.snooze(minutes))
 
+  ipcMain.handle('standup:triggerNow', () => standUpReminder.triggerNow())
+  ipcMain.handle('standup:respondDone', () => standUpReminder.respondDone())
+  ipcMain.handle('standup:respondSnooze', (_event, minutes) => standUpReminder.respondSnooze(minutes))
+
   ipcMain.handle('updater:checkNow', () => updaterService.checkForUpdates())
   ipcMain.handle('updater:quitAndInstall', () => updaterService.quitAndInstall())
+
+  ipcMain.handle('app:getVersion', () => app.getVersion())
 
   ipcMain.handle('companion:hide', () => {
     getCompanionWindow()?.hide()
