@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react'
 import gsap from 'gsap'
 import Sparkles from '../Sparkles.jsx'
+import { applyWalkCycle } from '../walkCycle.js'
 
 const SIZE_MAP = { small: 90, medium: 130, large: 180 }
 
@@ -36,12 +37,18 @@ export default function BoyMascot({ pose = 'idle', size = 'medium', facingLeft =
       gsap.killTweensOf([...limbs, bodyRef.current, rootRef.current])
 
       if (pose === 'walking') {
-        const tl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { duration: 0.3, ease: 'sine.inOut' } })
-        tl.to(leftLegRef.current, { rotate: 24, svgOrigin: LEFT_LEG_ORIGIN }, 0)
-        tl.to(rightLegRef.current, { rotate: -24, svgOrigin: RIGHT_LEG_ORIGIN }, 0)
-        tl.to(leftArmRef.current, { rotate: -20, svgOrigin: LEFT_ARM_ORIGIN }, 0)
-        tl.to(rightArmRef.current, { rotate: 20, svgOrigin: RIGHT_ARM_ORIGIN }, 0)
-        tl.to(bodyRef.current, { y: -4 }, 0)
+        applyWalkCycle(
+          gsap,
+          {
+            leftLeg: leftLegRef.current,
+            rightLeg: rightLegRef.current,
+            leftArm: leftArmRef.current,
+            rightArm: rightArmRef.current,
+            body: bodyRef.current,
+            root: rootRef.current
+          },
+          { leftLeg: LEFT_LEG_ORIGIN, rightLeg: RIGHT_LEG_ORIGIN, leftArm: LEFT_ARM_ORIGIN, rightArm: RIGHT_ARM_ORIGIN }
+        )
       } else if (pose === 'happy') {
         gsap.set(limbs, { rotate: 0 })
         gsap.to(rootRef.current, { y: -16, duration: 0.26, yoyo: true, repeat: 5, ease: 'power1.out' })
@@ -146,22 +153,33 @@ export default function BoyMascot({ pose = 'idle', size = 'medium', facingLeft =
 
         <g ref={leftLegRef}>
           <line x1="56" y1="128" x2="50" y2="156" stroke={`url(#${skinId})`} strokeWidth="8.5" strokeLinecap="round" />
+          <ellipse cx="50" cy="153" rx="6.5" ry="3.5" fill="#ffffff" />
           <ellipse cx="50" cy="160" rx="9" ry="5" fill={`url(#${shoeId})`} stroke="#2a4258" strokeWidth="1.2" />
+          <path d="M 44 160 Q 50 164 56 160" stroke="#3aa1d6" strokeWidth="1.8" fill="none" strokeLinecap="round" />
         </g>
         <g ref={rightLegRef}>
           <line x1="76" y1="128" x2="82" y2="156" stroke={`url(#${skinId})`} strokeWidth="8.5" strokeLinecap="round" />
+          <ellipse cx="82" cy="153" rx="6.5" ry="3.5" fill="#ffffff" />
           <ellipse cx="82" cy="160" rx="9" ry="5" fill={`url(#${shoeId})`} stroke="#2a4258" strokeWidth="1.2" />
+          <path d="M 76 160 Q 82 164 88 160" stroke="#3aa1d6" strokeWidth="1.8" fill="none" strokeLinecap="round" />
         </g>
 
         <g ref={bodyRef}>
-          {/* shorts */}
+          {/* shorts, with a stitched hem */}
           <path
             d="M 46 108 L 86 108 L 88 130 Q 65 138 44 130 Z"
             fill={`url(#${shortsId})`}
             stroke="#3f4a2e"
             strokeWidth="2"
           />
-          {/* t-shirt */}
+          <path
+            d="M 46 108 L 86 108"
+            stroke="#3f4a2e"
+            strokeWidth="1"
+            strokeDasharray="2.5,2"
+            opacity="0.7"
+          />
+          {/* hoodie / t-shirt with a couple of soft fabric folds */}
           <path
             d="M 46 76 L 86 76 L 90 112 Q 65 120 42 112 Z"
             fill={`url(#${shirtId})`}
@@ -170,9 +188,15 @@ export default function BoyMascot({ pose = 'idle', size = 'medium', facingLeft =
             filter={`url(#${dropShadowId})`}
           />
           <path d="M 47 78 L 46 96" stroke="#bfe6fb" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+          <path d="M 58 82 Q 60 96 57 108" stroke="#1c6f9c" strokeWidth="1.4" fill="none" opacity="0.35" />
+          <path d="M 74 82 Q 72 96 75 108" stroke="#1c6f9c" strokeWidth="1.4" fill="none" opacity="0.35" />
 
           {/* neck */}
           <rect x="58" y="68" width="14" height="10" fill={`url(#${skinId})`} />
+
+          {/* rounded ears, behind the head so only the outer curve peeks out */}
+          <ellipse cx="40" cy="52" rx="4.5" ry="6.5" fill={`url(#${skinId})`} />
+          <ellipse cx="90" cy="52" rx="4.5" ry="6.5" fill={`url(#${skinId})`} />
 
           {/* head */}
           <circle cx="65" cy="50" r="24" fill={`url(#${skinId})`} />
@@ -185,6 +209,7 @@ export default function BoyMascot({ pose = 'idle', size = 'medium', facingLeft =
             filter={`url(#${dropShadowId})`}
           />
           <path d="M 60 22 Q 65 14 70 22" stroke={`url(#${hairId})`} strokeWidth="5" fill="none" strokeLinecap="round" />
+          <path d="M 45 28 Q 55 20 64 20" stroke="#6b4f3a" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
 
           <path d="M 63 59 Q 65 62 66 59" stroke="#dba171" strokeWidth="1.3" fill="none" strokeLinecap="round" />
           <ellipse cx="47" cy="58" rx="5" ry="3" fill="#ff9eb0" opacity="0.45" />
@@ -224,10 +249,14 @@ export default function BoyMascot({ pose = 'idle', size = 'medium', facingLeft =
         <g ref={leftArmRef}>
           <line x1="46" y1="80" x2="28" y2="106" stroke={`url(#${shirtId})`} strokeWidth="7" strokeLinecap="round" />
           <circle cx="28" cy="106" r="5" fill={`url(#${skinId})`} />
-          {/* water bottle held in hand */}
+          {/* fingers gripping the bottle */}
+          <path d="M 25 104 L 22 108" stroke="#eab890" strokeWidth="1.3" strokeLinecap="round" />
+          <path d="M 28 106 L 25 110" stroke="#eab890" strokeWidth="1.3" strokeLinecap="round" />
+          {/* modern reusable water bottle: gradient body, cap, and a highlight for a slight glassy/transparent feel */}
           <g filter={`url(#${dropShadowId})`}>
-            <rect x="20" y="106" width="10" height="20" rx="3" fill={`url(#${bottleId})`} stroke="#1c6f9c" strokeWidth="1.2" />
-            <rect x="23" y="102" width="4" height="5" rx="1" fill="#3aa1d6" stroke="#1c6f9c" strokeWidth="1" />
+            <rect x="19" y="106" width="11" height="21" rx="3.5" fill={`url(#${bottleId})`} stroke="#1c6f9c" strokeWidth="1.2" opacity="0.92" />
+            <rect x="22" y="101" width="5" height="6" rx="1.2" fill="#3aa1d6" stroke="#1c6f9c" strokeWidth="1" />
+            <rect x="21" y="109" width="2.2" height="15" rx="1.1" fill="#ffffff" opacity="0.45" />
           </g>
         </g>
         <g ref={rightArmRef}>

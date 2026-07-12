@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from 'react'
 import gsap from 'gsap'
 import Sparkles from '../Sparkles.jsx'
+import { applyWalkCycle } from '../walkCycle.js'
 
 const SIZE_MAP = { small: 90, medium: 130, large: 180 }
 
@@ -41,12 +42,18 @@ export default function GirlMascot({ pose = 'idle', size = 'medium', facingLeft 
       gsap.killTweensOf([...limbs, bodyRef.current, rootRef.current])
 
       if (pose === 'walking') {
-        const tl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { duration: 0.32, ease: 'sine.inOut' } })
-        tl.to(leftLegRef.current, { rotate: 24, svgOrigin: LEFT_LEG_ORIGIN }, 0)
-        tl.to(rightLegRef.current, { rotate: -24, svgOrigin: RIGHT_LEG_ORIGIN }, 0)
-        tl.to(leftArmRef.current, { rotate: -18, svgOrigin: LEFT_ARM_ORIGIN }, 0)
-        tl.to(rightArmRef.current, { rotate: 18, svgOrigin: RIGHT_ARM_ORIGIN }, 0)
-        tl.to(bodyRef.current, { y: -4 }, 0)
+        applyWalkCycle(
+          gsap,
+          {
+            leftLeg: leftLegRef.current,
+            rightLeg: rightLegRef.current,
+            leftArm: leftArmRef.current,
+            rightArm: rightArmRef.current,
+            body: bodyRef.current,
+            root: rootRef.current
+          },
+          { leftLeg: LEFT_LEG_ORIGIN, rightLeg: RIGHT_LEG_ORIGIN, leftArm: LEFT_ARM_ORIGIN, rightArm: RIGHT_ARM_ORIGIN }
+        )
       } else if (pose === 'happy') {
         gsap.set(limbs, { rotate: 0 })
         gsap.to(rootRef.current, { y: -16, duration: 0.28, yoyo: true, repeat: 5, ease: 'power1.out' })

@@ -81,7 +81,7 @@ app.whenReady().then(() => {
   let batteryReminder
   const batteryMonitor = createBatteryMonitor({
     settingsStore,
-    onFullyCharged: () => batteryReminder.fire()
+    onMilestone: (stage) => batteryReminder.fire(stage)
   })
   batteryReminder = createBatteryReminderPresenter({
     getCompanionWindow: () => companionWindow,

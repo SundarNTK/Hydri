@@ -1,7 +1,12 @@
 const DIALOGUE = {
-  greeting: [
+  nearFullGreeting: [
+    "🔋 Almost there! You're at 95% — start thinking about unplugging soon.",
+    'Battery is nearly full (95%). No rush, but keep an eye on it! 😊',
+    "🔌 95% charged already! Won't be long now."
+  ],
+  fullGreeting: [
     '🔋 Your battery is fully charged! Unplugging now helps keep it healthy long-term.',
-    'Hey! You\'re at full charge — mind unplugging the charger? 😊',
+    "Hey! You're at full charge — mind unplugging the charger? 😊",
     "🔌 Battery's full! Time to disconnect the charger."
   ],
   happy: ['Great choice! Your battery will thank you. 💚', 'Yay! Unplugged and healthy!', "That's the way to do it!"],
@@ -13,21 +18,27 @@ function pickRandom(list) {
 }
 
 /**
- * Presents battery-full reminders through the same companion overlay window
- * the water reminders use, tagged with kind: 'battery' so the renderer shows
- * charger-appropriate dialogue and buttons instead of Drink Now / Snooze.
+ * Presents battery milestone reminders through the same companion overlay
+ * window the water reminders use, tagged with kind: 'battery' so the
+ * renderer shows charger-appropriate dialogue and buttons instead of
+ * Drink Now / Snooze.
+ *
+ * Two distinct milestones, both surfaced through the same UI:
+ *   - 'near-full': battery hit 95% while charging (early heads-up).
+ *   - 'full': battery hit 100% and is still plugged in (the real ask).
  */
 export function createBatteryReminderPresenter({ getCompanionWindow, batteryMonitor, notifier }) {
-  function fire() {
+  function fire(stage) {
+    const dialogueSet = stage === 'full' ? DIALOGUE.fullGreeting : DIALOGUE.nearFullGreeting
     const companionWindow = getCompanionWindow()
     if (companionWindow) {
       companionWindow.show()
       companionWindow.webContents.send('reminder:trigger', {
         kind: 'battery',
-        dialogue: pickRandom(DIALOGUE.greeting)
+        dialogue: pickRandom(dialogueSet)
       })
     }
-    notifier.notifyBatteryFull()
+    notifier.notifyBatteryFull(stage)
   }
 
   function acknowledge() {

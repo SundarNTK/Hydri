@@ -9,12 +9,13 @@ export function createNotifier() {
         body: 'Time to drink some water! 💧'
       }).show()
     },
-    notifyBatteryFull() {
+    notifyBatteryFull(stage = 'full') {
       if (!Notification.isSupported()) return
-      new Notification({
-        title: 'Hydri',
-        body: 'Battery fully charged — unplug the charger to help protect its health. 🔋'
-      }).show()
+      const body =
+        stage === 'full'
+          ? 'Battery fully charged — unplug the charger to help protect its health. 🔋'
+          : 'Battery at 95% — almost there. 🔋'
+      new Notification({ title: 'Hydri', body }).show()
     }
   }
 }

@@ -2,6 +2,8 @@ import GirlMascot from './GirlMascot.jsx'
 import WaterDropMascot from './WaterDropMascot.jsx'
 import BoyMascot from './BoyMascot.jsx'
 import LeafBuddyMascot from './LeafBuddyMascot.jsx'
+import CatMascot from './CatMascot.jsx'
+import DogMascot from './DogMascot.jsx'
 
 export const CHARACTERS = [
   {
@@ -27,6 +29,18 @@ export const CHARACTERS = [
     label: 'Leaf Buddy',
     description: 'A cheerful leaf, straight from the logo',
     Component: LeafBuddyMascot
+  },
+  {
+    id: 'cat',
+    label: 'Cat Buddy',
+    description: 'A cheerful tabby cat companion',
+    Component: CatMascot
+  },
+  {
+    id: 'dog',
+    label: 'Dog Buddy',
+    description: 'A floppy-eared, tail-wagging companion',
+    Component: DogMascot
   }
 ]
 

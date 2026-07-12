@@ -207,23 +207,10 @@ export default function SettingsForm({ settings, onUpdate }) {
 
       <Section title="Battery" icon="🔋">
         <ToggleField
-          label="Remind me to unplug when fully charged"
+          label="Remind me about charging (95% heads-up, then unplug at 100%)"
           checked={settings.batteryReminderEnabled}
           onChange={(checked) => onUpdate({ batteryReminderEnabled: checked })}
         />
-        {settings.batteryReminderEnabled && (
-          <Field label={`Remind at battery level (${settings.batteryReminderThreshold}%)`}>
-            <input
-              type="range"
-              min={80}
-              max={100}
-              step={1}
-              value={settings.batteryReminderThreshold}
-              onChange={(event) => onUpdate({ batteryReminderThreshold: Number(event.target.value) })}
-              className="w-full accent-hydri-blue"
-            />
-          </Field>
-        )}
       </Section>
 
       <Section title="Startup & Updates" icon="🚀">

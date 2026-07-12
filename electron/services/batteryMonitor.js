@@ -2,19 +2,26 @@ import si from 'systeminformation'
 
 const POLL_INTERVAL_MS = 5 * 60 * 1000 // battery % changes slowly; no need to poll more often
 
+const NEAR_FULL_THRESHOLD = 95
+const FULL_THRESHOLD = 100
+
 /**
- * Watches system battery status and fires once whenever the laptop is both
- * plugged in AND at/above the configured charge threshold -- the moment
- * leaving it plugged in stops helping and starts aging the battery.
+ * Watches system battery status and fires on two distinct scenarios while
+ * plugged in:
+ *   1. "near full" -- battery has reached 95% and is still charging, an
+ *      early heads-up.
+ *   2. "full" -- battery is at 100% and *still* plugged in, the point where
+ *      staying connected stops helping and starts aging the battery.
  *
- * Deliberately edge-triggered rather than repeating on every poll: it fires
- * once per "plugged in and full" session, then goes quiet until the
- * condition clears (unplugged, or charge drops back below the threshold),
- * so it nags once instead of every five minutes.
+ * Each stage is edge-triggered (fires once per charging session) rather
+ * than repeating on every poll, and both reset together once unplugged (or
+ * the level drops back below 95%), so a fresh charge cycle gets its own
+ * pair of reminders instead of nagging every five minutes.
  */
-export function createBatteryMonitor({ settingsStore, onFullyCharged }) {
+export function createBatteryMonitor({ settingsStore, onMilestone }) {
   let timer = null
-  let alreadyNotified = false
+  let notifiedNearFull = false
+  let notifiedFull = false
   let snoozeUntil = 0
 
   async function poll() {
@@ -30,30 +37,33 @@ export function createBatteryMonitor({ settingsStore, onFullyCharged }) {
 
     if (!battery?.hasBattery) return // desktops / VMs with no battery: nothing to do
 
-    const threshold = settingsStore.get('batteryReminderThreshold')
-    const isFullAndPluggedIn = battery.acConnected && battery.percent >= threshold
-
-    if (!isFullAndPluggedIn) {
-      alreadyNotified = false
+    if (!battery.acConnected || battery.percent < NEAR_FULL_THRESHOLD) {
+      notifiedNearFull = false
+      notifiedFull = false
       return
     }
 
-    if (alreadyNotified || Date.now() < snoozeUntil) return
+    if (Date.now() < snoozeUntil) return
 
-    alreadyNotified = true
-    onFullyCharged()
+    if (battery.percent >= FULL_THRESHOLD) {
+      if (!notifiedFull) {
+        notifiedFull = true
+        onMilestone('full')
+      }
+    } else if (!notifiedNearFull) {
+      notifiedNearFull = true
+      onMilestone('near-full')
+    }
   }
 
   function snooze(minutes = 10) {
     snoozeUntil = Date.now() + minutes * 60 * 1000
-    alreadyNotified = false
   }
 
   function acknowledge() {
     // Stay quiet until the condition actually clears (unplugged, or drops
     // below the threshold) -- re-arming immediately would just nag again
     // on the very next poll while still plugged in.
-    alreadyNotified = true
   }
 
   function start() {
