@@ -100,7 +100,7 @@ export default function DashboardPage() {
           <button
             onClick={() => api.updater.checkNow()}
             disabled={updateStatus.state === 'checking' || updateStatus.state === 'downloading'}
-            className="rounded-full border border-white/30 bg-white/60 px-3 py-1.5 text-sm font-medium text-hydri-ink shadow-glass backdrop-blur-glass transition hover:bg-white/80 disabled:opacity-50 dark:border-white/10 dark:bg-slate-800/50 dark:text-slate-100"
+            className="rounded-full bg-hydri-blue px-3 py-1.5 text-sm font-semibold text-white shadow-glass transition hover:bg-hydri-blue-dark active:scale-95 disabled:opacity-50"
           >
             🔄 Check for Updates
           </button>
